@@ -41,10 +41,14 @@ export default async function EntryPage({
     ? branches.find((b) => b.id === branchId)
     : user.branch;
 
-  const report = await prisma.monthlyReport.findUnique({
-    where: { branchId_period: { branchId, period } },
-    include: { nationalities: true, courses: true },
-  });
+  const [report, natPresets, coursePresets] = await Promise.all([
+    prisma.monthlyReport.findUnique({
+      where: { branchId_period: { branchId, period } },
+      include: { nationalities: true, courses: true },
+    }),
+    prisma.nationalityPreset.findMany({ orderBy: { order: "asc" } }),
+    prisma.coursePreset.findMany({ orderBy: { order: "asc" } }),
+  ]);
 
   const numbers: ReportNumbers = emptyNumbers();
   if (report) {
@@ -60,16 +64,20 @@ export default async function EntryPage({
       period={period}
       initialNumbers={numbers}
       initialNationalities={
-        report?.nationalities.map((n) => ({ name: n.name, count: n.count })) ??
-        []
+        report && report.nationalities.length
+          ? report.nationalities.map((n) => ({ name: n.name, count: n.count }))
+          : natPresets.map((p) => ({ name: p.name, count: 0 }))
       }
       initialCourses={
-        report?.courses.map((c) => ({
-          name: c.name,
-          type: c.type,
-          count: c.count,
-        })) ?? []
+        report && report.courses.length
+          ? report.courses.map((c) => ({
+              name: c.name,
+              type: c.type,
+              count: c.count,
+            }))
+          : coursePresets.map((p) => ({ name: p.name, type: p.type, count: 0 }))
       }
+      presetNationalities={natPresets.map((p) => p.name)}
       updatedAt={report?.updatedAt?.toISOString() ?? null}
     />
   );

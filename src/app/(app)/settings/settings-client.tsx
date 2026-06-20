@@ -17,7 +17,13 @@ import {
   deleteBranch,
   importReports,
   wipeAllData,
+  addNationalityPreset,
+  removeNationalityPreset,
+  addCoursePreset,
+  removeCoursePreset,
 } from "@/app/actions/branches";
+import { COURSE_TYPES, COURSE_TYPE_LABELS, type CourseType } from "@/lib/enums";
+import { IconGlobe, IconBook } from "@/components/icons";
 
 type Branch = {
   id: string;
@@ -27,7 +33,18 @@ type Branch = {
   users: number;
 };
 
-export function SettingsClient({ branches }: { branches: Branch[] }) {
+type NatPreset = { id: string; name: string };
+type CoursePreset = { id: string; name: string; type: string };
+
+export function SettingsClient({
+  branches,
+  natPresets,
+  coursePresets,
+}: {
+  branches: Branch[];
+  natPresets: NatPreset[];
+  coursePresets: CoursePreset[];
+}) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [newName, setNewName] = useState("");
@@ -35,8 +52,43 @@ export function SettingsClient({ branches }: { branches: Branch[] }) {
   const [editName, setEditName] = useState("");
   const [importMsg, setImportMsg] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [newNat, setNewNat] = useState("");
+  const [newCourse, setNewCourse] = useState("");
+  const [newCourseType, setNewCourseType] = useState<string>("GENERAL_ENGLISH");
 
   const refresh = () => router.refresh();
+
+  function addNat() {
+    if (!newNat.trim()) return;
+    const name = newNat;
+    start(async () => {
+      await addNationalityPreset(name);
+      setNewNat("");
+      refresh();
+    });
+  }
+  function delNat(id: string) {
+    start(async () => {
+      await removeNationalityPreset(id);
+      refresh();
+    });
+  }
+  function addCourse() {
+    if (!newCourse.trim()) return;
+    const name = newCourse;
+    const type = newCourseType;
+    start(async () => {
+      await addCoursePreset(name, type);
+      setNewCourse("");
+      refresh();
+    });
+  }
+  function delCourse(id: string) {
+    start(async () => {
+      await removeCoursePreset(id);
+      refresh();
+    });
+  }
 
   function add() {
     if (!newName.trim()) return;
@@ -239,6 +291,115 @@ export function SettingsClient({ branches }: { branches: Branch[] }) {
             </section>
           </div>
         </div>
+
+        {/* Entry-form presets (admin controls what the branch form shows) */}
+        <section className="card p-6">
+          <div className="flex items-center gap-2 mb-1">
+            <IconBook className="text-brand" />
+            <h2 className="font-extrabold text-navy">إعدادات نموذج الإدخال</h2>
+          </div>
+          <p className="text-sm text-ink-soft mb-5">
+            القيم الافتراضية اللي بتظهر جاهزة للموظف في فورم إدخال بيانات الفرع.
+          </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Default nationalities */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <IconGlobe className="text-brand" width={18} height={18} />
+                <h3 className="font-bold text-ink">الجنسيات الافتراضية</h3>
+              </div>
+              <div className="flex gap-2 mb-3">
+                <input
+                  value={newNat}
+                  onChange={(e) => setNewNat(e.target.value)}
+                  placeholder="أضف جنسية"
+                  className="field flex-1"
+                  onKeyDown={(e) => e.key === "Enter" && addNat()}
+                />
+                <button onClick={addNat} disabled={pending} className="btn-primary px-4">
+                  <IconPlus width={16} height={16} />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {natPresets.length === 0 && (
+                  <p className="text-ink-soft text-sm">لا توجد قيم افتراضية.</p>
+                )}
+                {natPresets.map((p) => (
+                  <span
+                    key={p.id}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-canvas border border-line px-3 py-1.5 text-sm"
+                  >
+                    {p.name}
+                    <button
+                      onClick={() => delNat(p.id)}
+                      className="text-ink-soft hover:text-danger"
+                      aria-label="حذف"
+                    >
+                      <IconTrash width={14} height={14} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Default courses */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <IconBook className="text-brand" width={18} height={18} />
+                <h3 className="font-bold text-ink">الكورسات الافتراضية</h3>
+              </div>
+              <div className="flex gap-2 mb-3">
+                <input
+                  value={newCourse}
+                  onChange={(e) => setNewCourse(e.target.value)}
+                  placeholder="اسم الكورس"
+                  className="field flex-1 min-w-0"
+                  onKeyDown={(e) => e.key === "Enter" && addCourse()}
+                />
+                <select
+                  value={newCourseType}
+                  onChange={(e) => setNewCourseType(e.target.value)}
+                  className="field w-32 shrink-0"
+                >
+                  {COURSE_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {COURSE_TYPE_LABELS[t as CourseType]}
+                    </option>
+                  ))}
+                </select>
+                <button onClick={addCourse} disabled={pending} className="btn-primary px-4">
+                  <IconPlus width={16} height={16} />
+                </button>
+              </div>
+              <div className="space-y-2">
+                {coursePresets.length === 0 && (
+                  <p className="text-ink-soft text-sm">لا توجد قيم افتراضية.</p>
+                )}
+                {coursePresets.map((p) => (
+                  <div
+                    key={p.id}
+                    className="flex items-center justify-between rounded-xl bg-canvas border border-line px-3 py-2"
+                  >
+                    <div>
+                      <span className="font-bold text-ink text-sm">{p.name}</span>
+                      <span className="text-xs text-ink-soft mr-2">
+                        {COURSE_TYPE_LABELS[p.type as CourseType] ?? p.type}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => delCourse(p.id)}
+                      className="text-ink-soft hover:text-danger"
+                      aria-label="حذف"
+                    >
+                      <IconTrash width={16} height={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

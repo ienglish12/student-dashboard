@@ -77,6 +77,42 @@ async function main() {
     });
   }
 
+  // Default form presets (admin-editable later in Settings)
+  const NAT_PRESETS = [
+    "السعودية",
+    "مصر",
+    "الإمارات",
+    "الأردن",
+    "سوريا",
+    "اليمن",
+    "السودان",
+    "فلسطين",
+    "العراق",
+    "أخرى",
+  ];
+  for (let i = 0; i < NAT_PRESETS.length; i++) {
+    await prisma.nationalityPreset.upsert({
+      where: { name: NAT_PRESETS[i] },
+      update: { order: i },
+      create: { name: NAT_PRESETS[i], order: i },
+    });
+  }
+
+  const COURSE_PRESETS: { name: string; type: string }[] = [
+    { name: "General English", type: "GENERAL_ENGLISH" },
+    { name: "IELTS Preparation", type: "TEST_PREP" },
+    { name: "TOEFL Preparation", type: "TEST_PREP" },
+    { name: "Business English", type: "OTHER" },
+    { name: "Kids English", type: "OTHER" },
+  ];
+  for (let i = 0; i < COURSE_PRESETS.length; i++) {
+    await prisma.coursePreset.upsert({
+      where: { name: COURSE_PRESETS[i].name },
+      update: { order: i, type: COURSE_PRESETS[i].type },
+      create: { ...COURSE_PRESETS[i], order: i },
+    });
+  }
+
   // Sample December reports for the first 5 branches
   for (let i = 0; i < SAMPLE.length; i++) {
     const branch = branches[i];
