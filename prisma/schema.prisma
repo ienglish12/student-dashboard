@@ -1,0 +1,100 @@
+// iEnglish Analytics — data model (see SPEC §3)
+// NOTE: SQLite is used for local dev. To switch to PostgreSQL in production,
+// change provider to "postgresql" and DATABASE_URL, then convert the String
+// role/type fields below to native enums (Role, CourseType).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// Role  : "ADMIN" | "BRANCH"
+// (SQLite has no enums; enforced in app code via src/lib/enums.ts)
+
+model User {
+  id           String  @id @default(cuid())
+  email        String  @unique
+  passwordHash String
+  role         String  @default("BRANCH")
+  branchId     String?
+  branch       Branch? @relation(fields: [branchId], references: [id])
+}
+
+model Branch {
+  id      String          @id @default(cuid())
+  name    String
+  slug    String          @unique
+  users   User[]
+  reports MonthlyReport[]
+}
+
+model MonthlyReport {
+  id       String @id @default(cuid())
+  branchId String
+  branch   Branch @relation(fields: [branchId], references: [id])
+  period   String // "YYYY-MM"
+
+  // Gender
+  male   Int @default(0)
+  female Int @default(0)
+
+  // Age buckets
+  ageKids        Int @default(0)
+  ageTeens       Int @default(0)
+  ageYoungAdults Int @default(0)
+  ageAdults      Int @default(0)
+  ageSeniors     Int @default(0)
+
+  // Class types
+  classGroupAdult Int @default(0)
+  classVipAdult   Int @default(0)
+  classVipKid     Int @default(0)
+  classOther      Int @default(0)
+
+  // Levels
+  levelFoundation Int @default(0)
+  level1          Int @default(0)
+  level2          Int @default(0)
+  level3          Int @default(0)
+  level4          Int @default(0)
+  level5          Int @default(0)
+  level6          Int @default(0)
+  level7          Int @default(0)
+  level8          Int @default(0)
+  level9          Int @default(0)
+
+  // Delivery
+  onsite Int @default(0)
+  online Int @default(0)
+  home   Int @default(0)
+
+  // Renewals
+  renewals Int @default(0)
+
+  nationalities Nationality[]
+  courses       Course[]
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([branchId, period]) // one record per branch per month
+}
+
+model Nationality {
+  id       String        @id @default(cuid())
+  reportId String
+  report   MonthlyReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  name     String
+  count    Int           @default(0)
+}
+
+model Course {
+  id       String        @id @default(cuid())
+  reportId String
+  report   MonthlyReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  name     String
+  type     String // "GENERAL_ENGLISH" | "TEST_PREP" | "OTHER"
+  count    Int           @default(0)
+}

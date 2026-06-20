@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-tajawal), system-ui, sans-serif;
+
+  /* Brand palette (matches the iEnglish design) */
+  --color-canvas: #eef2f8;
+  --color-ink: #1a2b4a;
+  --color-ink-soft: #64748b;
+
+  --color-navy: #16243f;
+  --color-navy-700: #1e3358;
+
+  --color-brand: #1d4ed8;
+  --color-brand-600: #2563eb;
+  --color-brand-50: #eff4ff;
+
+  --color-pink: #ec4899;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-danger-50: #fef2f2;
+
+  --color-line: #e2e8f0;
+  --color-card: #ffffff;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-canvas);
+}
+
+/* Utilities used across the design */
+@layer components {
+  .card {
+    @apply bg-card rounded-2xl border border-line shadow-sm;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-2.5 font-bold text-white transition hover:bg-brand-600 disabled:opacity-50;
+  }
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-navy px-5 py-2.5 font-bold text-white transition hover:bg-navy-700 disabled:opacity-50;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-card px-5 py-2.5 font-bold text-ink transition hover:bg-canvas;
+  }
+  .field {
+    @apply w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-ink outline-none transition focus:border-brand focus:bg-white;
+  }
+  .num-field {
+    @apply w-full rounded-xl border border-line bg-canvas px-3 py-2 text-center font-bold text-ink outline-none transition focus:border-brand focus:bg-white;
+  }
+}
+
+/* Hide number input spinners (we use custom steppers where needed) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  margin: 0;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
