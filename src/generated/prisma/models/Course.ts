@@ -424,6 +424,7 @@ export type CourseCreateOrConnectWithoutReportInput = {
 
 export type CourseCreateManyReportInputEnvelope = {
   data: Prisma.CourseCreateManyReportInput | Prisma.CourseCreateManyReportInput[]
+  skipDuplicates?: boolean
 }
 
 export type CourseUpsertWithWhereUniqueWithoutReportInput = {
@@ -1203,6 +1204,7 @@ export type CourseCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * The data used to create many Courses.
    */
   data: Prisma.CourseCreateManyInput | Prisma.CourseCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1221,6 +1223,7 @@ export type CourseCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many Courses.
    */
   data: Prisma.CourseCreateManyInput | Prisma.CourseCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

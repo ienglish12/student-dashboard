@@ -1004,6 +1004,7 @@ export type CoursePresetCreateManyArgs<ExtArgs extends runtime.Types.Extensions.
    * The data used to create many CoursePresets.
    */
   data: Prisma.CoursePresetCreateManyInput | Prisma.CoursePresetCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1022,6 +1023,7 @@ export type CoursePresetCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * The data used to create many CoursePresets.
    */
   data: Prisma.CoursePresetCreateManyInput | Prisma.CoursePresetCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

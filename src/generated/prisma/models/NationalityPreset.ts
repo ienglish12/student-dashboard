@@ -976,6 +976,7 @@ export type NationalityPresetCreateManyArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many NationalityPresets.
    */
   data: Prisma.NationalityPresetCreateManyInput | Prisma.NationalityPresetCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -994,6 +995,7 @@ export type NationalityPresetCreateManyAndReturnArgs<ExtArgs extends runtime.Typ
    * The data used to create many NationalityPresets.
    */
   data: Prisma.NationalityPresetCreateManyInput | Prisma.NationalityPresetCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

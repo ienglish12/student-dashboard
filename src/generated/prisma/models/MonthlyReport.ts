@@ -1213,6 +1213,7 @@ export type MonthlyReportCreateOrConnectWithoutBranchInput = {
 
 export type MonthlyReportCreateManyBranchInputEnvelope = {
   data: Prisma.MonthlyReportCreateManyBranchInput | Prisma.MonthlyReportCreateManyBranchInput[]
+  skipDuplicates?: boolean
 }
 
 export type MonthlyReportUpsertWithWhereUniqueWithoutBranchInput = {
@@ -2604,6 +2605,7 @@ export type MonthlyReportCreateManyArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many MonthlyReports.
    */
   data: Prisma.MonthlyReportCreateManyInput | Prisma.MonthlyReportCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -2622,6 +2624,7 @@ export type MonthlyReportCreateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    * The data used to create many MonthlyReports.
    */
   data: Prisma.MonthlyReportCreateManyInput | Prisma.MonthlyReportCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

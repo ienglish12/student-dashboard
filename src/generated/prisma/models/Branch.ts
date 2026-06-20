@@ -1151,6 +1151,7 @@ export type BranchCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * The data used to create many Branches.
    */
   data: Prisma.BranchCreateManyInput | Prisma.BranchCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1169,6 +1170,7 @@ export type BranchCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many Branches.
    */
   data: Prisma.BranchCreateManyInput | Prisma.BranchCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

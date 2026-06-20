@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { LoginForm } from "./login-form";
 
 export default async function LoginPage() {
-  const session = await getSession();
-  if (session) redirect(session.role === "ADMIN" ? "/dashboard" : "/entry");
+  // Validate against the DB (not just the cookie) so a stale session whose
+  // user no longer exists falls through to the form instead of looping.
+  const user = await getCurrentUser();
+  if (user) redirect(user.role === "ADMIN" ? "/dashboard" : "/entry");
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-b from-brand-50 to-canvas">

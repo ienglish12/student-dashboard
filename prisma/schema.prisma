@@ -1,7 +1,5 @@
 // iEnglish Analytics — data model (see SPEC §3)
-// NOTE: SQLite is used for local dev. To switch to PostgreSQL in production,
-// change provider to "postgresql" and DATABASE_URL, then convert the String
-// role/type fields below to native enums (Role, CourseType).
+// Uses PostgreSQL (Render). DATABASE_URL is provided via env.
 
 generator client {
   provider = "prisma-client"
@@ -9,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 // Role  : "ADMIN" | "BRANCH"

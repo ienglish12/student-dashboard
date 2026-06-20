@@ -400,6 +400,7 @@ export type NationalityCreateOrConnectWithoutReportInput = {
 
 export type NationalityCreateManyReportInputEnvelope = {
   data: Prisma.NationalityCreateManyReportInput | Prisma.NationalityCreateManyReportInput[]
+  skipDuplicates?: boolean
 }
 
 export type NationalityUpsertWithWhereUniqueWithoutReportInput = {
@@ -1168,6 +1169,7 @@ export type NationalityCreateManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * The data used to create many Nationalities.
    */
   data: Prisma.NationalityCreateManyInput | Prisma.NationalityCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1186,6 +1188,7 @@ export type NationalityCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * The data used to create many Nationalities.
    */
   data: Prisma.NationalityCreateManyInput | Prisma.NationalityCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */
