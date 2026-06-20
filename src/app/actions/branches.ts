@@ -127,6 +127,55 @@ export async function importReports(items: ImportItem[]) {
   return { ok: true, imported, errors };
 }
 
+// ---- Form presets (admin-managed defaults shown in the branch form) ----
+
+export async function addNationalityPreset(name: string) {
+  await requireAdmin();
+  const trimmed = name.trim();
+  if (!trimmed) throw new Error("الاسم مطلوب");
+  const count = await prisma.nationalityPreset.count();
+  await prisma.nationalityPreset.upsert({
+    where: { name: trimmed },
+    update: {},
+    create: { name: trimmed, order: count },
+  });
+  revalidatePath("/settings");
+  revalidatePath("/entry");
+  return { ok: true };
+}
+
+export async function removeNationalityPreset(id: string) {
+  await requireAdmin();
+  await prisma.nationalityPreset.delete({ where: { id } });
+  revalidatePath("/settings");
+  revalidatePath("/entry");
+  return { ok: true };
+}
+
+export async function addCoursePreset(name: string, type: string) {
+  await requireAdmin();
+  const trimmed = name.trim();
+  if (!trimmed) throw new Error("الاسم مطلوب");
+  const safeType = isCourseType(type) ? type : "OTHER";
+  const count = await prisma.coursePreset.count();
+  await prisma.coursePreset.upsert({
+    where: { name: trimmed },
+    update: { type: safeType },
+    create: { name: trimmed, type: safeType, order: count },
+  });
+  revalidatePath("/settings");
+  revalidatePath("/entry");
+  return { ok: true };
+}
+
+export async function removeCoursePreset(id: string) {
+  await requireAdmin();
+  await prisma.coursePreset.delete({ where: { id } });
+  revalidatePath("/settings");
+  revalidatePath("/entry");
+  return { ok: true };
+}
+
 /** Danger zone: wipe all reports + their children (SPEC §6). */
 export async function wipeAllData() {
   await requireAdmin();

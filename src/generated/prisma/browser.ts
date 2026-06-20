@@ -42,3 +42,13 @@ export type Nationality = Prisma.NationalityModel
  * 
  */
 export type Course = Prisma.CourseModel
+/**
+ * Model NationalityPreset
+ * 
+ */
+export type NationalityPreset = Prisma.NationalityPresetModel
+/**
+ * Model CoursePreset
+ * 
+ */
+export type CoursePreset = Prisma.CoursePresetModel

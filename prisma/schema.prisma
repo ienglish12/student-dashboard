@@ -98,3 +98,17 @@ model Course {
   type     String // "GENERAL_ENGLISH" | "TEST_PREP" | "OTHER"
   count    Int           @default(0)
 }
+
+// Admin-managed defaults that pre-fill the branch entry form.
+model NationalityPreset {
+  id    String @id @default(cuid())
+  name  String @unique
+  order Int    @default(0)
+}
+
+model CoursePreset {
+  id    String @id @default(cuid())
+  name  String @unique
+  type  String @default("GENERAL_ENGLISH") // "GENERAL_ENGLISH" | "TEST_PREP" | "OTHER"
+  order Int    @default(0)
+}

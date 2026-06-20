@@ -8,10 +8,14 @@ export default async function SettingsPage() {
   if (!session) redirect("/login");
   if (session.role !== "ADMIN") redirect("/entry");
 
-  const branches = await prisma.branch.findMany({
-    orderBy: { name: "asc" },
-    include: { _count: { select: { reports: true, users: true } } },
-  });
+  const [branches, natPresets, coursePresets] = await Promise.all([
+    prisma.branch.findMany({
+      orderBy: { name: "asc" },
+      include: { _count: { select: { reports: true, users: true } } },
+    }),
+    prisma.nationalityPreset.findMany({ orderBy: { order: "asc" } }),
+    prisma.coursePreset.findMany({ orderBy: { order: "asc" } }),
+  ]);
 
   return (
     <SettingsClient
@@ -21,6 +25,12 @@ export default async function SettingsPage() {
         slug: b.slug,
         reports: b._count.reports,
         users: b._count.users,
+      }))}
+      natPresets={natPresets.map((p) => ({ id: p.id, name: p.name }))}
+      coursePresets={coursePresets.map((p) => ({
+        id: p.id,
+        name: p.name,
+        type: p.type,
       }))}
     />
   );

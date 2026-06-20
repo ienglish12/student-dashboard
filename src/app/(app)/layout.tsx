@@ -13,7 +13,11 @@ export default async function AppLayout({
 
   return (
     <div className="flex min-h-screen flex-row-reverse">
-      <Sidebar role={user.role as Role} branchName={user.branch?.name} />
+      <Sidebar
+        role={user.role as Role}
+        branchName={user.branch?.name}
+        email={user.email}
+      />
       <main className="flex-1 min-w-0">{children}</main>
     </div>
   );

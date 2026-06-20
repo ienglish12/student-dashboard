@@ -55,7 +55,9 @@ export const ModelName = {
   Branch: 'Branch',
   MonthlyReport: 'MonthlyReport',
   Nationality: 'Nationality',
-  Course: 'Course'
+  Course: 'Course',
+  NationalityPreset: 'NationalityPreset',
+  CoursePreset: 'CoursePreset'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -145,6 +147,25 @@ export const CourseScalarFieldEnum = {
 } as const
 
 export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
+
+
+export const NationalityPresetScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order'
+} as const
+
+export type NationalityPresetScalarFieldEnum = (typeof NationalityPresetScalarFieldEnum)[keyof typeof NationalityPresetScalarFieldEnum]
+
+
+export const CoursePresetScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  order: 'order'
+} as const
+
+export type CoursePresetScalarFieldEnum = (typeof CoursePresetScalarFieldEnum)[keyof typeof CoursePresetScalarFieldEnum]
 
 
 export const SortOrder = {

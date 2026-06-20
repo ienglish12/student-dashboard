@@ -388,7 +388,9 @@ export const ModelName = {
   Branch: 'Branch',
   MonthlyReport: 'MonthlyReport',
   Nationality: 'Nationality',
-  Course: 'Course'
+  Course: 'Course',
+  NationalityPreset: 'NationalityPreset',
+  CoursePreset: 'CoursePreset'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "branch" | "monthlyReport" | "nationality" | "course"
+    modelProps: "user" | "branch" | "monthlyReport" | "nationality" | "course" | "nationalityPreset" | "coursePreset"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -778,6 +780,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NationalityPreset: {
+      payload: Prisma.$NationalityPresetPayload<ExtArgs>
+      fields: Prisma.NationalityPresetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NationalityPresetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NationalityPresetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload>
+        }
+        findFirst: {
+          args: Prisma.NationalityPresetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NationalityPresetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload>
+        }
+        findMany: {
+          args: Prisma.NationalityPresetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload>[]
+        }
+        create: {
+          args: Prisma.NationalityPresetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload>
+        }
+        createMany: {
+          args: Prisma.NationalityPresetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NationalityPresetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload>[]
+        }
+        delete: {
+          args: Prisma.NationalityPresetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload>
+        }
+        update: {
+          args: Prisma.NationalityPresetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload>
+        }
+        deleteMany: {
+          args: Prisma.NationalityPresetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NationalityPresetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NationalityPresetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload>[]
+        }
+        upsert: {
+          args: Prisma.NationalityPresetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NationalityPresetPayload>
+        }
+        aggregate: {
+          args: Prisma.NationalityPresetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNationalityPreset>
+        }
+        groupBy: {
+          args: Prisma.NationalityPresetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NationalityPresetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NationalityPresetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NationalityPresetCountAggregateOutputType> | number
+        }
+      }
+    }
+    CoursePreset: {
+      payload: Prisma.$CoursePresetPayload<ExtArgs>
+      fields: Prisma.CoursePresetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CoursePresetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CoursePresetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload>
+        }
+        findFirst: {
+          args: Prisma.CoursePresetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CoursePresetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload>
+        }
+        findMany: {
+          args: Prisma.CoursePresetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload>[]
+        }
+        create: {
+          args: Prisma.CoursePresetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload>
+        }
+        createMany: {
+          args: Prisma.CoursePresetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CoursePresetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload>[]
+        }
+        delete: {
+          args: Prisma.CoursePresetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload>
+        }
+        update: {
+          args: Prisma.CoursePresetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload>
+        }
+        deleteMany: {
+          args: Prisma.CoursePresetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CoursePresetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CoursePresetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload>[]
+        }
+        upsert: {
+          args: Prisma.CoursePresetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePresetPayload>
+        }
+        aggregate: {
+          args: Prisma.CoursePresetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCoursePreset>
+        }
+        groupBy: {
+          args: Prisma.CoursePresetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoursePresetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CoursePresetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoursePresetCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -888,6 +1038,25 @@ export const CourseScalarFieldEnum = {
 } as const
 
 export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
+
+
+export const NationalityPresetScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order'
+} as const
+
+export type NationalityPresetScalarFieldEnum = (typeof NationalityPresetScalarFieldEnum)[keyof typeof NationalityPresetScalarFieldEnum]
+
+
+export const CoursePresetScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  order: 'order'
+} as const
+
+export type CoursePresetScalarFieldEnum = (typeof CoursePresetScalarFieldEnum)[keyof typeof CoursePresetScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1054,6 +1223,8 @@ export type GlobalOmitConfig = {
   monthlyReport?: Prisma.MonthlyReportOmit
   nationality?: Prisma.NationalityOmit
   course?: Prisma.CourseOmit
+  nationalityPreset?: Prisma.NationalityPresetOmit
+  coursePreset?: Prisma.CoursePresetOmit
 }
 
 /* Types for Logging */

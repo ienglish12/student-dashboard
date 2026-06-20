@@ -39,6 +39,7 @@ export function EntryForm(props: {
   initialNumbers: ReportNumbers;
   initialNationalities: Nat[];
   initialCourses: Crs[];
+  presetNationalities?: string[];
   updatedAt: string | null;
 }) {
   const router = useRouter();
@@ -196,6 +197,27 @@ export function EntryForm(props: {
             </button>
           }
         >
+          {/* Quick-add chips from admin presets */}
+          {props.presetNationalities && props.presetNationalities.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {props.presetNationalities
+                .filter(
+                  (name) => !nationalities.some((n) => n.name === name),
+                )
+                .map((name) => (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() =>
+                      setNationalities((l) => [...l, { name, count: 0 }])
+                    }
+                    className="inline-flex items-center gap-1 rounded-full border border-brand/30 bg-brand-50 px-3 py-1 text-sm font-bold text-brand hover:bg-brand hover:text-white transition"
+                  >
+                    <IconPlus width={14} height={14} /> {name}
+                  </button>
+                ))}
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {nationalities.length === 0 && (
               <p className="text-ink-soft text-sm">لا توجد جنسيات مضافة.</p>
