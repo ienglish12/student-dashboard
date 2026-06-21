@@ -12,7 +12,7 @@ export function LoginForm() {
 
   return (
     <form action={formAction} className="card w-full max-w-md p-8">
-      <h2 className="text-2xl font-extrabold text-navy mb-1">تسجيل الدخول</h2>
+      <h2 className="text-2xl font-extrabold text-ink mb-1">تسجيل الدخول</h2>
       <p className="text-ink-soft text-sm mb-6">
         أدخل بياناتك للوصول إلى لوحة التحكم
       </p>

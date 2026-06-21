@@ -1,53 +1,77 @@
 @import "tailwindcss";
 
-@theme {
+/* Dark mode is toggled via a `.dark` class on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
   --font-sans: var(--font-tajawal), system-ui, sans-serif;
 
-  /* Brand palette (matches the iEnglish design) */
-  --color-canvas: #eef2f8;
-  --color-ink: #1a2b4a;
-  --color-ink-soft: #64748b;
-
-  --color-navy: #16243f;
-  --color-navy-700: #1e3358;
-
-  --color-brand: #1d4ed8;
-  --color-brand-600: #2563eb;
-  --color-brand-50: #eff4ff;
-
+  --color-canvas: var(--canvas);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-navy: var(--navy);
+  --color-navy-700: var(--navy-700);
+  --color-brand: var(--brand);
+  --color-brand-600: var(--brand-600);
+  --color-brand-50: var(--brand-50);
   --color-pink: #ec4899;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
-  --color-danger-50: #fef2f2;
-
-  --color-line: #e2e8f0;
-  --color-card: #ffffff;
+  --color-danger-50: var(--danger-50);
+  --color-line: var(--line);
+  --color-card: var(--card);
 }
 
-html {
+:root {
+  --canvas: #eef2f8;
+  --ink: #1a2b4a;
+  --ink-soft: #64748b;
+  --navy: #16243f;
+  --navy-700: #1e3358;
+  --brand: #1d4ed8;
+  --brand-600: #2563eb;
+  --brand-50: #eff4ff;
+  --danger-50: #fef2f2;
+  --line: #e2e8f0;
+  --card: #ffffff;
   color-scheme: light;
 }
 
+.dark {
+  --canvas: #0d1320;
+  --ink: #e8edf6;
+  --ink-soft: #94a3b8;
+  --navy: #16243f;
+  --navy-700: #243a63;
+  --brand: #3b82f6;
+  --brand-600: #2563eb;
+  --brand-50: #18233b;
+  --danger-50: #2a1518;
+  --line: #232f44;
+  --card: #151d2c;
+  color-scheme: dark;
+}
+
 body {
-  background: var(--color-canvas);
+  background: var(--canvas);
+  transition: background-color 0.2s ease;
 }
 
 /* Smooth, modern scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: var(--line) transparent;
 }
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--line);
   border-radius: 9999px;
 }
 
-/* Utilities used across the design */
 @layer components {
   .card {
     @apply bg-card rounded-2xl border border-line transition-shadow duration-200;
@@ -55,6 +79,10 @@ body {
   }
   .card:hover {
     box-shadow: 0 2px 6px rgba(16, 36, 63, 0.06), 0 8px 28px rgba(16, 36, 63, 0.08);
+  }
+  .dark .card,
+  .dark .card:hover {
+    box-shadow: none;
   }
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-2.5 font-bold text-white transition hover:bg-brand-600 disabled:opacity-50;
@@ -66,14 +94,10 @@ body {
     @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-card px-5 py-2.5 font-bold text-ink transition hover:bg-canvas;
   }
   .field {
-    @apply w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-ink outline-none transition focus:border-brand focus:bg-white;
-  }
-  .num-field {
-    @apply w-full rounded-xl border border-line bg-canvas px-3 py-2 text-center font-bold text-ink outline-none transition focus:border-brand focus:bg-white;
+    @apply w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-ink outline-none transition focus:border-brand;
   }
 }
 
-/* Hide number input spinners (we use custom steppers where needed) */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   margin: 0;

@@ -31,7 +31,7 @@ export function NumberBox({
           onChange(Number.isFinite(n) && n > 0 ? n : 0);
         }}
         onFocus={(e) => e.target.select()}
-        className={`w-full rounded-xl border bg-canvas px-3 py-2.5 text-center font-bold text-ink outline-none transition focus:bg-white ${
+        className={`w-full rounded-xl border bg-canvas px-3 py-2.5 text-center font-bold text-ink outline-none transition focus:bg-card ${
           invalid
             ? "border-danger/50 focus:border-danger"
             : "border-line focus:border-brand"

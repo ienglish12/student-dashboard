@@ -105,26 +105,26 @@ export function EntryForm(props: {
 
   return (
     <div className="min-h-screen pb-28">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-6 lg:px-8 h-16 bg-card border-b border-line sticky top-0 z-20 no-print">
-        <div className="flex items-center gap-2">
-          <span className="size-8 rounded-lg bg-brand-50 grid place-items-center text-brand">
-            <IconPin width={18} height={18} />
-          </span>
-          <div>
-            <p className="font-extrabold text-navy leading-tight">
-              {props.branchName}
-            </p>
-            <p className="text-[11px] text-ink-soft">إدخال البيانات الشهرية</p>
+      <div className="p-4 lg:p-8 space-y-5 mx-auto w-full max-w-[1400px]">
+        {/* Page heading + month picker */}
+        <div className="flex items-center justify-between flex-wrap gap-3 no-print">
+          <div className="flex items-center gap-2.5">
+            <span className="size-10 rounded-xl bg-brand-50 grid place-items-center text-brand">
+              <IconPin />
+            </span>
+            <div>
+              <h1 className="text-2xl font-extrabold text-ink leading-tight">
+                {props.branchName}
+              </h1>
+              <p className="text-xs text-ink-soft">إدخال البيانات الشهرية</p>
+            </div>
           </div>
+          <MonthPicker
+            value={props.period}
+            onChange={(p) => router.push(`/entry?period=${p}`)}
+          />
         </div>
-        <MonthPicker
-          value={props.period}
-          onChange={(p) => router.push(`/entry?period=${p}`)}
-        />
-      </header>
 
-      <div className="p-4 lg:p-8 space-y-5 max-w-5xl mx-auto">
         {/* Total + validation summary */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="rounded-2xl bg-navy text-white p-5 flex items-center justify-between">
@@ -260,7 +260,7 @@ export function EntryForm(props: {
                       ),
                     )
                   }
-                  className="field flex-1 min-w-0 bg-white"
+                  className="field flex-1 min-w-0 bg-card"
                 />
                 <div className="w-20 shrink-0">
                   <NumberBox
@@ -463,7 +463,7 @@ export function EntryForm(props: {
       </div>
 
       {/* Sticky save bar */}
-      <div className="fixed bottom-0 inset-x-0 lg:right-64 bg-card/95 backdrop-blur border-t border-line px-6 lg:px-8 py-3 flex items-center justify-between gap-4 no-print z-20">
+      <div className="fixed bottom-0 inset-x-0 bg-card/95 backdrop-blur border-t border-line px-6 lg:px-8 py-3 flex items-center justify-between gap-4 no-print z-20">
         <p className="text-sm text-ink-soft">
           {props.updatedAt
             ? `آخر حفظ: ${new Date(props.updatedAt).toLocaleString("ar-EG")}`
@@ -495,7 +495,7 @@ function Section({
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           {icon}
-          <h3 className="font-extrabold text-navy">{title}</h3>
+          <h3 className="font-extrabold text-ink">{title}</h3>
         </div>
         {badge}
       </div>

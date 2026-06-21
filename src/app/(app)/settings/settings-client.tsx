@@ -219,14 +219,9 @@ export function SettingsClient({
 
   return (
     <div className="min-h-screen">
-      <header className="flex items-center justify-between px-8 h-16 bg-card border-b border-line no-print">
-        <span className="font-extrabold text-navy">iEnglish Analytics</span>
-        <span className="text-sm text-ink-soft">الإعدادات</span>
-      </header>
-
-      <div className="p-6 lg:p-8 space-y-6 max-w-6xl mx-auto">
+      <div className="p-6 lg:p-8 space-y-6 mx-auto w-full max-w-[1400px]">
         <div>
-          <h1 className="text-3xl font-extrabold text-navy">إعدادات النظام</h1>
+          <h1 className="text-3xl font-extrabold text-ink">إعدادات النظام</h1>
           <p className="text-ink-soft mt-1">
             إدارة الفروع، استيراد البيانات، والتحكم في قاعدة البيانات العامة.
           </p>
@@ -238,7 +233,7 @@ export function SettingsClient({
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
                 <IconStore className="text-brand" />
-                <h2 className="font-extrabold text-navy">إدارة الفروع</h2>
+                <h2 className="font-extrabold text-ink">إدارة الفروع</h2>
               </div>
             </div>
 
@@ -312,7 +307,7 @@ export function SettingsClient({
             <section className="card p-6">
               <div className="flex items-center gap-2 mb-4">
                 <IconUpload className="text-brand" />
-                <h2 className="font-extrabold text-navy">استيراد ملفات الفروع</h2>
+                <h2 className="font-extrabold text-ink">استيراد ملفات الفروع</h2>
               </div>
               <button
                 onClick={() => fileRef.current?.click()}
@@ -361,7 +356,7 @@ export function SettingsClient({
         <section className="card p-6">
           <div className="flex items-center gap-2 mb-1">
             <IconUsers className="text-brand" />
-            <h2 className="font-extrabold text-navy">المستخدمون</h2>
+            <h2 className="font-extrabold text-ink">المستخدمون</h2>
           </div>
           <p className="text-sm text-ink-soft mb-5">
             أنشئ حسابات الدخول: موظف فرع (يضيف بيانات فرعه فقط) أو مسؤول.
@@ -464,7 +459,7 @@ export function SettingsClient({
         <section className="card p-6">
           <div className="flex items-center gap-2 mb-1">
             <IconBook className="text-brand" />
-            <h2 className="font-extrabold text-navy">إعدادات نموذج الإدخال</h2>
+            <h2 className="font-extrabold text-ink">إعدادات نموذج الإدخال</h2>
           </div>
           <p className="text-sm text-ink-soft mb-5">
             القيم الافتراضية اللي بتظهر جاهزة للموظف في فورم إدخال بيانات الفرع.

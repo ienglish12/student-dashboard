@@ -18,7 +18,7 @@ export default async function LoginPage() {
             <path d="M7 15v-3M12 15V9M17 15v-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </div>
-        <h1 className="text-3xl font-extrabold text-navy">آي إنجلش</h1>
+        <h1 className="text-3xl font-extrabold text-ink">آي إنجلش</h1>
         <p className="text-ink-soft text-sm">نظام تحليل البيانات الأكاديمي</p>
       </div>
 

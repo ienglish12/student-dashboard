@@ -57,24 +57,11 @@ export function DashboardClient({
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="flex items-center justify-between px-8 h-16 bg-card border-b border-line no-print">
-        <span className="font-extrabold text-navy">iEnglish Analytics</span>
-        <div className="flex items-center gap-2">
-          <button onClick={() => router.refresh()} className="p-2 rounded-lg hover:bg-canvas text-ink-soft">
-            <IconRefresh />
-          </button>
-          <button onClick={() => window.print()} className="p-2 rounded-lg hover:bg-canvas text-ink-soft">
-            <IconPrint />
-          </button>
-        </div>
-      </header>
-
-      <div className="p-6 lg:p-8 space-y-6">
+      <div className="p-6 lg:p-8 space-y-6 mx-auto w-full max-w-[1600px]">
         {/* Title + filters row */}
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-navy">
+            <h1 className="text-3xl font-extrabold text-ink">
               {isSingle ? selectedName : "تحليل شامل"}
             </h1>
             <p className="text-sm text-ink-soft mt-1 flex items-center gap-1.5">
@@ -114,6 +101,12 @@ export function DashboardClient({
                 className="font-bold bg-transparent outline-none"
               />
             </label>
+            <button onClick={() => router.refresh()} className="card size-10 grid place-items-center text-ink-soft hover:text-brand" aria-label="تحديث">
+              <IconRefresh width={18} height={18} />
+            </button>
+            <button onClick={() => window.print()} className="card size-10 grid place-items-center text-ink-soft hover:text-brand" aria-label="طباعة">
+              <IconPrint width={18} height={18} />
+            </button>
           </div>
         </div>
 
@@ -168,7 +161,7 @@ export function DashboardClient({
                   </ResponsiveContainer>
                   <div className="absolute inset-0 grid place-items-center pointer-events-none">
                     <div className="text-center">
-                      <div className="text-2xl font-extrabold text-navy">
+                      <div className="text-2xl font-extrabold text-ink">
                         {counts.total.toLocaleString("en")}
                       </div>
                       <div className="text-xs text-ink-soft">إجمالي</div>
@@ -291,7 +284,7 @@ function Kpi({
       <p className={`text-xs ${accent ? "text-white/70" : "text-ink-soft"}`}>
         {label}
       </p>
-      <p className={`font-extrabold mt-1 ${small ? "text-lg" : "text-2xl"} ${accent ? "text-white" : "text-navy"}`}>
+      <p className={`font-extrabold mt-1 ${small ? "text-lg" : "text-2xl"} ${accent ? "text-white" : "text-ink"}`}>
         {value}
       </p>
       {sub && <p className={`text-[11px] ${accent ? "text-white/60" : "text-ink-soft"}`}>{sub}</p>}
@@ -310,7 +303,7 @@ function Card({
 }) {
   return (
     <section className={`card p-5 ${className}`}>
-      <h3 className="font-extrabold text-navy mb-4">{title}</h3>
+      <h3 className="font-extrabold text-ink mb-4">{title}</h3>
       {children}
     </section>
   );
@@ -361,7 +354,7 @@ function EmptyState({
       <div className="size-14 rounded-full bg-canvas grid place-items-center mx-auto mb-4 text-ink-soft">
         <IconUsers width={28} height={28} />
       </div>
-      <h3 className="font-extrabold text-navy text-lg">لا توجد بيانات لهذا الشهر</h3>
+      <h3 className="font-extrabold text-ink text-lg">لا توجد بيانات لهذا الشهر</h3>
       <p className="text-ink-soft text-sm mt-2">
         {single
           ? "هذا الفرع لم يُدخل بياناته بعد لهذه الفترة."
