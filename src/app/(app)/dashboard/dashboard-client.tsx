@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import type { Aggregated } from "@/lib/aggregate";
 import { useT } from "@/components/i18n";
+import { MonthPicker } from "@/components/month-picker";
 import {
   IconRefresh,
   IconPrint,
@@ -94,15 +95,10 @@ export function DashboardClient({
               </select>
             </div>
             {/* Month filter */}
-            <label className="card flex items-center gap-2 px-4 py-2">
+            <div className="card flex items-center gap-2 px-3 py-2">
               <IconCalendar className="text-brand" />
-              <input
-                type="month"
-                value={period}
-                onChange={(e) => go({ period: e.target.value })}
-                className="font-bold bg-transparent outline-none"
-              />
-            </label>
+              <MonthPicker value={period} onChange={(p) => go({ period: p })} />
+            </div>
             <button onClick={() => router.refresh()} className="card size-10 grid place-items-center text-ink-soft hover:text-brand" aria-label={t("refresh")}>
               <IconRefresh width={18} height={18} />
             </button>
@@ -171,8 +167,8 @@ export function DashboardClient({
                   </div>
                 </div>
                 <div className="flex justify-center gap-6 text-sm mt-2">
-                  <Legend color={NAVY} label={t("legend.male")} pct={counts.malePct} />
-                  <Legend color={PINK} label={t("legend.female")} pct={counts.femalePct} />
+                  <Legend color={NAVY} label={t("legend.male")} pct={counts.malePct} count={counts.male} />
+                  <Legend color={PINK} label={t("legend.female")} pct={counts.femalePct} count={counts.female} />
                 </div>
               </Card>
 
@@ -196,7 +192,7 @@ export function DashboardClient({
               <Card title={t("card.topNats")}>
                 <div className="space-y-3">
                   {topNationalities.map((n) => (
-                    <ProgressRow key={n.name} label={n.name} pct={n.pct} />
+                    <ProgressRow key={n.name} label={n.name} pct={n.pct} count={n.count} />
                   ))}
                   {topNationalities.length === 0 && (
                     <p className="text-ink-soft text-sm">—</p>
@@ -207,7 +203,7 @@ export function DashboardClient({
               <Card title={t("card.ageGroups")}>
                 <div className="space-y-3">
                   {ageGroups.map((a) => (
-                    <ProgressRow key={a.key} label={a.label} pct={a.pct} />
+                    <ProgressRow key={a.key} label={a.label} pct={a.pct} count={a.count} />
                   ))}
                 </div>
               </Card>
@@ -311,22 +307,46 @@ function Card({
   );
 }
 
-function Legend({ color, label, pct }: { color: string; label: string; pct: number }) {
+function Legend({
+  color,
+  label,
+  pct,
+  count,
+}: {
+  color: string;
+  label: string;
+  pct: number;
+  count?: number;
+}) {
   return (
     <span className="flex items-center gap-1.5">
       <span className="size-2.5 rounded-full" style={{ background: color }} />
       <span className="text-ink-soft">{label}</span>
       <span className="font-bold text-ink">{pct}%</span>
+      {count !== undefined && <span className="text-ink-soft">({count})</span>}
     </span>
   );
 }
 
-function ProgressRow({ label, pct }: { label: string; pct: number }) {
+function ProgressRow({
+  label,
+  pct,
+  count,
+}: {
+  label: string;
+  pct: number;
+  count?: number;
+}) {
   return (
     <div>
       <div className="flex justify-between text-sm mb-1">
         <span className="text-ink">{label}</span>
-        <span className="font-bold text-brand">{pct}%</span>
+        <span className="flex items-center gap-1.5">
+          {count !== undefined && (
+            <span className="text-ink-soft">({count})</span>
+          )}
+          <span className="font-bold text-brand">{pct}%</span>
+        </span>
       </div>
       <div className="h-2 rounded-full bg-canvas overflow-hidden">
         <div className="h-full rounded-full bg-brand" style={{ width: `${pct}%` }} />
