@@ -314,7 +314,7 @@ export function EntryForm(props: {
           <Section icon={<IconBook className="text-brand" />} title={t("sec.courses")}>
             <div className="space-y-3">
               {courses.map((c, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <div key={i} className="flex items-center gap-3">
                   <input
                     value={c.name}
                     placeholder={t("f.courseName")}
@@ -323,7 +323,7 @@ export function EntryForm(props: {
                         l.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)),
                       )
                     }
-                    className="field flex-1 min-w-0"
+                    className="field flex-1 min-w-0 h-11"
                   />
                   <select
                     value={c.type}
@@ -332,7 +332,7 @@ export function EntryForm(props: {
                         l.map((x, j) => (j === i ? { ...x, type: e.target.value } : x)),
                       )
                     }
-                    className="field w-28 shrink-0"
+                    className="field w-36 shrink-0 h-11"
                   >
                     {COURSE_TYPES.map((ct) => (
                       <option key={ct} value={ct}>
@@ -340,7 +340,7 @@ export function EntryForm(props: {
                       </option>
                     ))}
                   </select>
-                  <div className="w-16 shrink-0">
+                  <div className="w-20 shrink-0">
                     <NumberBox
                       value={c.count}
                       onChange={(v) =>
@@ -435,15 +435,15 @@ export function EntryForm(props: {
         </Section>
       </div>
 
-      {/* Floating save bar (lifted off the bottom edge) */}
-      <div className="fixed bottom-5 inset-x-3 lg:inset-x-8 card bg-card/95 backdrop-blur px-5 lg:px-6 py-3 flex items-center justify-between gap-4 no-print z-20 shadow-lg">
+      {/* Full-width save bar touching the bottom; button lifted slightly */}
+      <div className="fixed bottom-0 inset-x-0 bg-card/95 backdrop-blur border-t border-line px-6 lg:px-8 py-3 flex items-center justify-between gap-4 no-print z-20">
         <p className="text-sm text-ink-soft">
           {props.updatedAt
             ? `${t("entry.lastSaved")}: ${new Date(props.updatedAt).toLocaleString()}`
             : t("entry.notSaved")}
           {saved && <span className="text-success font-bold mr-2">{t("entry.saved")}</span>}
         </p>
-        <button onClick={save} disabled={saving} className="btn-primary">
+        <button onClick={save} disabled={saving} className="btn-primary -translate-y-3 shadow-lg">
           <IconSave />
           {saving ? t("saving") : t("save")}
         </button>
