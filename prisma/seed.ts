@@ -61,20 +61,7 @@ async function main() {
     },
   });
 
-  // One branch user per branch (email = <slug>@ienglish.com / branch123)
-  const branchPass = await bcrypt.hash("branch123", 10);
-  for (const branch of branches) {
-    await prisma.user.upsert({
-      where: { email: `${branch.slug}@ienglish.com` },
-      update: { passwordHash: branchPass, role: "BRANCH", branchId: branch.id },
-      create: {
-        email: `${branch.slug}@ienglish.com`,
-        passwordHash: branchPass,
-        role: "BRANCH",
-        branchId: branch.id,
-      },
-    });
-  }
+  // Branch users are created by the admin from Settings → المستخدمون.
 
   // Default form presets (admin-editable later in Settings)
   const NAT_PRESETS = [
@@ -172,7 +159,7 @@ async function main() {
 
   console.log("✅ Seed complete.");
   console.log("   Admin:  admin@ienglish.com / admin123");
-  console.log("   Branch: al-garhoud@ienglish.com / branch123 (and other slugs)");
+  console.log("   (Branch users are created from Settings → المستخدمون)");
 }
 
 main()

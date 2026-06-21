@@ -22,8 +22,13 @@ import {
   addCoursePreset,
   removeCoursePreset,
 } from "@/app/actions/branches";
+import {
+  createUser,
+  deleteUser,
+  resetUserPassword,
+} from "@/app/actions/users";
 import { COURSE_TYPES, COURSE_TYPE_LABELS, type CourseType } from "@/lib/enums";
-import { IconGlobe, IconBook } from "@/components/icons";
+import { IconGlobe, IconBook, IconUsers } from "@/components/icons";
 
 type Branch = {
   id: string;
@@ -35,13 +40,23 @@ type Branch = {
 
 type NatPreset = { id: string; name: string };
 type CoursePreset = { id: string; name: string; type: string };
+type UserRow = {
+  id: string;
+  email: string;
+  role: string;
+  branchName: string | null;
+};
 
 export function SettingsClient({
+  currentUserId,
   branches,
+  users,
   natPresets,
   coursePresets,
 }: {
+  currentUserId: string;
   branches: Branch[];
+  users: UserRow[];
   natPresets: NatPreset[];
   coursePresets: CoursePreset[];
 }) {
@@ -87,6 +102,56 @@ export function SettingsClient({
     start(async () => {
       await removeCoursePreset(id);
       refresh();
+    });
+  }
+
+  // ---- User management ----
+  const [uEmail, setUEmail] = useState("");
+  const [uPass, setUPass] = useState("");
+  const [uRole, setURole] = useState("BRANCH");
+  const [uBranch, setUBranch] = useState("");
+  const [uMsg, setUMsg] = useState<string | null>(null);
+
+  function addUser() {
+    setUMsg(null);
+    start(async () => {
+      try {
+        await createUser({
+          email: uEmail,
+          password: uPass,
+          role: uRole,
+          branchId: uRole === "BRANCH" ? uBranch || branches[0]?.id : null,
+        });
+        setUEmail("");
+        setUPass("");
+        setUMsg("تم إنشاء المستخدم ✓");
+        refresh();
+      } catch (e) {
+        setUMsg(e instanceof Error ? e.message : "حصل خطأ");
+      }
+    });
+  }
+  function delUser(id: string) {
+    if (!confirm("حذف هذا المستخدم؟")) return;
+    start(async () => {
+      try {
+        await deleteUser(id);
+        refresh();
+      } catch (e) {
+        setUMsg(e instanceof Error ? e.message : "حصل خطأ");
+      }
+    });
+  }
+  function resetPass(id: string) {
+    const p = prompt("كلمة المرور الجديدة (6 أحرف على الأقل):");
+    if (!p) return;
+    start(async () => {
+      try {
+        await resetUserPassword(id, p);
+        setUMsg("تم تغيير كلمة المرور ✓");
+      } catch (e) {
+        setUMsg(e instanceof Error ? e.message : "حصل خطأ");
+      }
     });
   }
 
@@ -291,6 +356,109 @@ export function SettingsClient({
             </section>
           </div>
         </div>
+
+        {/* User management */}
+        <section className="card p-6">
+          <div className="flex items-center gap-2 mb-1">
+            <IconUsers className="text-brand" />
+            <h2 className="font-extrabold text-navy">المستخدمون</h2>
+          </div>
+          <p className="text-sm text-ink-soft mb-5">
+            أنشئ حسابات الدخول: موظف فرع (يضيف بيانات فرعه فقط) أو مسؤول.
+          </p>
+
+          {/* Add user form */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 mb-3">
+            <input
+              value={uEmail}
+              onChange={(e) => setUEmail(e.target.value)}
+              placeholder="الإيميل (اسم المستخدم)"
+              dir="ltr"
+              className="field text-left lg:col-span-2"
+            />
+            <input
+              value={uPass}
+              onChange={(e) => setUPass(e.target.value)}
+              placeholder="كلمة المرور"
+              type="text"
+              dir="ltr"
+              className="field text-left"
+            />
+            <select
+              value={uRole}
+              onChange={(e) => setURole(e.target.value)}
+              className="field"
+            >
+              <option value="BRANCH">موظف فرع</option>
+              <option value="ADMIN">مسؤول</option>
+            </select>
+            {uRole === "BRANCH" ? (
+              <select
+                value={uBranch}
+                onChange={(e) => setUBranch(e.target.value)}
+                className="field"
+              >
+                <option value="">— اختر الفرع —</option>
+                {branches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="hidden lg:block" />
+            )}
+          </div>
+          <div className="flex items-center gap-3 mb-5">
+            <button onClick={addUser} disabled={pending} className="btn-primary">
+              <IconPlus width={16} height={16} /> إضافة مستخدم
+            </button>
+            {uMsg && <span className="text-sm text-ink-soft">{uMsg}</span>}
+          </div>
+
+          {/* Users list */}
+          <div className="space-y-2">
+            {users.map((u) => (
+              <div
+                key={u.id}
+                className="flex items-center gap-3 rounded-xl border border-line p-3"
+              >
+                <span
+                  className={`size-9 rounded-full grid place-items-center font-bold text-white shrink-0 ${
+                    u.role === "ADMIN" ? "bg-navy" : "bg-brand"
+                  }`}
+                >
+                  {u.email[0]?.toUpperCase()}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-ink truncate" dir="ltr">
+                    {u.email}
+                  </p>
+                  <p className="text-xs text-ink-soft">
+                    {u.role === "ADMIN"
+                      ? "مسؤول النظام"
+                      : `موظف فرع${u.branchName ? " · " + u.branchName : ""}`}
+                  </p>
+                </div>
+                <button
+                  onClick={() => resetPass(u.id)}
+                  className="text-ink-soft text-sm font-bold px-3 hover:text-brand"
+                >
+                  كلمة المرور
+                </button>
+                {u.id !== currentUserId && (
+                  <button
+                    onClick={() => delUser(u.id)}
+                    className="text-danger p-2 hover:bg-danger-50 rounded-lg"
+                    aria-label="حذف"
+                  >
+                    <IconTrash />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Entry-form presets (admin controls what the branch form shows) */}
         <section className="card p-6">
