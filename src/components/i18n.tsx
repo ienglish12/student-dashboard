@@ -48,6 +48,10 @@ export const T: Dict = {
     ar: "ابدأ بإدخال عدد الذكور والإناث — الإجمالي بيتحسب تلقائياً.",
     en: "Start with male & female counts — the total is computed automatically.",
   },
+  "entry.reviewHint": {
+    ar: "أدخل البيانات على راحتك — هنراجع التطابق مع الإجمالي بعد ما تدوس حفظ.",
+    en: "Enter the data freely — we'll check totals after you press Save.",
+  },
   "entry.allMatch": { ar: "كل البيانات متطابقة ✓", en: "All data matches ✓" },
   "entry.allMatchSub": {
     ar: "كل المجموعات بتساوي إجمالي الطلاب",

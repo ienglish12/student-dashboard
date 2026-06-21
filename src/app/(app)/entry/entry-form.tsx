@@ -66,6 +66,9 @@ export function EntryForm(props: {
   const [notes, setNotes] = useState(props.initialNotes);
   const [saving, startSaving] = useTransition();
   const [saved, setSaved] = useState(false);
+  // Warnings only appear after the first save, so they don't stress the
+  // employee while they're still typing.
+  const [validated, setValidated] = useState(false);
 
   const fl = (f: { key: string; label: string }) =>
     FKEY[f.key] ? t(FKEY[f.key]) : f.label;
@@ -100,6 +103,7 @@ export function EntryForm(props: {
 
   function save() {
     setSaved(false);
+    setValidated(true);
     startSaving(async () => {
       await saveReport({
         branchId: props.branchId,
@@ -114,7 +118,9 @@ export function EntryForm(props: {
     });
   }
 
-  const badge = (sum: number) => <MatchBadge sum={sum} total={total} t={t} />;
+  const badge = (sum: number) =>
+    validated ? <MatchBadge sum={sum} total={total} t={t} /> : null;
+  const showInvalid = (sum: number) => validated && total > 0 && sum !== total;
 
   return (
     <div className="min-h-screen pb-28">
@@ -158,6 +164,11 @@ export function EntryForm(props: {
               <div className="card h-full p-4 flex items-center gap-3 text-ink-soft">
                 <IconUsers className="text-brand" />
                 {t("entry.startHint")}
+              </div>
+            ) : !validated ? (
+              <div className="card h-full p-4 flex items-center gap-3 text-ink-soft">
+                <IconCheck className="text-brand" />
+                {t("entry.reviewHint")}
               </div>
             ) : issues.length === 0 ? (
               <div className="h-full rounded-2xl border border-success/30 bg-success/5 p-4 flex items-center gap-3">
@@ -221,7 +232,7 @@ export function EntryForm(props: {
                 label={f.label}
                 value={numbers[f.key]}
                 onChange={(v) => set(f.key, v)}
-                invalid={total > 0 && ageSum !== total}
+                invalid={showInvalid(ageSum)}
               />
             ))}
           </div>
@@ -288,16 +299,13 @@ export function EntryForm(props: {
           </div>
         </Section>
 
-        {/* Class + Courses */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Class type */}
           <Section icon={<IconPin className="text-brand" />} title={t("sec.classType")} badge={badge(classSum)}>
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {CLASS_FIELDS.map((f) => (
-                <div key={f.key} className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-ink">{fl(f)}</span>
-                  <div className="w-24 shrink-0">
-                    <NumberBox value={numbers[f.key]} onChange={(v) => set(f.key, v)} />
-                  </div>
+                <div key={f.key}>
+                  <div className="text-xs text-ink-soft mb-1 text-center">{fl(f)}</div>
+                  <NumberBox value={numbers[f.key]} onChange={(v) => set(f.key, v)} />
                 </div>
               ))}
             </div>
@@ -363,7 +371,6 @@ export function EntryForm(props: {
               </button>
             </div>
           </Section>
-        </div>
 
         {/* Levels */}
         <Section icon={<IconBook className="text-brand" />} title={t("sec.levels")} badge={badge(levelSum)}>
@@ -374,48 +381,47 @@ export function EntryForm(props: {
                 label={f.label}
                 value={numbers[f.key]}
                 onChange={(v) => set(f.key, v)}
-                invalid={total > 0 && levelSum !== total}
+                invalid={showInvalid(levelSum)}
               />
             ))}
           </div>
         </Section>
 
-        {/* Delivery + Renewals */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <Section icon={<IconPin className="text-brand" />} title={t("sec.delivery")} badge={badge(deliverySum)}>
-            <div className="grid grid-cols-3 gap-3">
-              {DELIVERY_FIELDS.map((f) => (
-                <NumberBox
-                  key={f.key}
-                  label={fl(f)}
-                  value={numbers[f.key]}
-                  onChange={(v) => set(f.key, v)}
-                  invalid={total > 0 && deliverySum !== total}
-                />
-              ))}
-            </div>
-          </Section>
+        {/* Delivery */}
+        <Section icon={<IconPin className="text-brand" />} title={t("sec.delivery")} badge={badge(deliverySum)}>
+          <div className="grid grid-cols-3 gap-3">
+            {DELIVERY_FIELDS.map((f) => (
+              <NumberBox
+                key={f.key}
+                label={fl(f)}
+                value={numbers[f.key]}
+                onChange={(v) => set(f.key, v)}
+                invalid={showInvalid(deliverySum)}
+              />
+            ))}
+          </div>
+        </Section>
 
-          <Section icon={<IconRefresh className="text-brand" />} title={t("sec.renewals")}>
-            <div className="flex items-center gap-4">
-              <div className="w-32">
-                <NumberBox
-                  label={t("entry.renewalCount")}
-                  value={numbers.renewals}
-                  onChange={(v) => set("renewals", v)}
-                />
-              </div>
-              {total > 0 && (
-                <div className="rounded-xl bg-brand-50 px-4 py-2 text-center">
-                  <p className="text-2xl font-extrabold text-brand">
-                    {Math.round((numbers.renewals / total) * 100)}%
-                  </p>
-                  <p className="text-[11px] text-ink-soft">{t("entry.renewalRate")}</p>
-                </div>
-              )}
+        {/* Renewals */}
+        <Section icon={<IconRefresh className="text-brand" />} title={t("sec.renewals")}>
+          <div className="flex items-center gap-4">
+            <div className="w-40">
+              <NumberBox
+                label={t("entry.renewalCount")}
+                value={numbers.renewals}
+                onChange={(v) => set("renewals", v)}
+              />
             </div>
-          </Section>
-        </div>
+            {total > 0 && (
+              <div className="rounded-xl bg-brand-50 px-4 py-2 text-center">
+                <p className="text-2xl font-extrabold text-brand">
+                  {Math.round((numbers.renewals / total) * 100)}%
+                </p>
+                <p className="text-[11px] text-ink-soft">{t("entry.renewalRate")}</p>
+              </div>
+            )}
+          </div>
+        </Section>
 
         {/* Notes */}
         <Section icon={<IconBook className="text-brand" />} title={t("sec.notes")}>
@@ -429,15 +435,15 @@ export function EntryForm(props: {
         </Section>
       </div>
 
-      {/* Sticky save bar */}
-      <div className="fixed bottom-0 inset-x-0 bg-card/95 backdrop-blur border-t border-line px-6 lg:px-8 py-3 flex items-center justify-between gap-4 no-print z-20">
+      {/* Floating save bar (lifted off the bottom edge) */}
+      <div className="fixed bottom-5 inset-x-3 lg:inset-x-8 card bg-card/95 backdrop-blur px-5 lg:px-6 py-3 flex items-center justify-between gap-4 no-print z-20 shadow-lg">
         <p className="text-sm text-ink-soft">
           {props.updatedAt
             ? `${t("entry.lastSaved")}: ${new Date(props.updatedAt).toLocaleString()}`
             : t("entry.notSaved")}
           {saved && <span className="text-success font-bold mr-2">{t("entry.saved")}</span>}
         </p>
-        <button onClick={save} disabled={saving} className="btn-dark">
+        <button onClick={save} disabled={saving} className="btn-primary">
           <IconSave />
           {saving ? t("saving") : t("save")}
         </button>

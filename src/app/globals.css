@@ -55,7 +55,11 @@
 
 body {
   background: var(--canvas);
-  transition: background-color 0.2s ease;
+}
+
+/* Disable transitions briefly while switching theme to avoid any flash */
+.theme-switching * {
+  transition: none !important;
 }
 
 /* Smooth, modern scrollbar */

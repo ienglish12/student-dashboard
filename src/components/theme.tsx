@@ -22,7 +22,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme((prev) => {
       const next = prev === "dark" ? "light" : "dark";
       localStorage.setItem("theme", next);
-      document.documentElement.classList.toggle("dark", next === "dark");
+      const root = document.documentElement;
+      root.classList.add("theme-switching");
+      root.classList.toggle("dark", next === "dark");
+      // re-enable transitions after the paint settles
+      window.setTimeout(() => root.classList.remove("theme-switching"), 60);
       return next;
     });
   };
