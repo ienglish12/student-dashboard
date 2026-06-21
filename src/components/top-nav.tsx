@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/actions/auth";
 import { ThemeToggle } from "@/components/theme";
+import { useT, LangToggle } from "@/components/i18n";
 import { IconDashboard, IconSettings, IconLogout } from "@/components/icons";
 import type { Role } from "@/lib/enums";
 
@@ -17,13 +18,14 @@ export function TopNav({
   email?: string;
 }) {
   const pathname = usePathname();
+  const { t } = useT();
   const initial = (email?.[0] ?? "U").toUpperCase();
 
   const items =
     role === "ADMIN"
       ? [
-          { href: "/dashboard", label: "تحليل البيانات", icon: <IconDashboard width={18} height={18} /> },
-          { href: "/settings", label: "الإعدادات", icon: <IconSettings width={18} height={18} /> },
+          { href: "/dashboard", label: t("nav.analysis"), icon: <IconDashboard width={18} height={18} /> },
+          { href: "/settings", label: t("nav.settings"), icon: <IconSettings width={18} height={18} /> },
         ]
       : [];
 
@@ -38,8 +40,8 @@ export function TopNav({
             </svg>
           </div>
           <div className="hidden sm:block">
-            <p className="font-extrabold text-ink leading-tight">آي إنجلش</p>
-            <p className="text-[10px] text-ink-soft -mt-0.5">نظام تحليل البيانات</p>
+            <p className="font-extrabold text-ink leading-tight">{t("app.name")}</p>
+            <p className="text-[10px] text-ink-soft -mt-0.5">{t("app.tagline")}</p>
           </div>
         </div>
 
@@ -68,11 +70,12 @@ export function TopNav({
 
         {/* Right controls */}
         <div className="flex items-center gap-1.5">
+          <LangToggle />
           <ThemeToggle />
           <div className="hidden md:flex items-center gap-2 rounded-full bg-canvas pr-3 pl-1 py-1">
             <span className="text-xs">
               <span className="text-ink-soft">
-                {role === "ADMIN" ? "مسؤول" : "موظف"}
+                {role === "ADMIN" ? t("role.admin") : t("role.branch")}
                 {role === "BRANCH" && branchName ? ` · ${branchName}` : ""}
               </span>
             </span>

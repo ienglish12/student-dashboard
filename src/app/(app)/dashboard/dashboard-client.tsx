@@ -14,6 +14,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import type { Aggregated } from "@/lib/aggregate";
+import { useT } from "@/components/i18n";
 import {
   IconRefresh,
   IconPrint,
@@ -40,6 +41,7 @@ export function DashboardClient({
   branchNotes: string | null;
 }) {
   const router = useRouter();
+  const { t } = useT();
   const { counts, byBranch, topNationalities, ageGroups, levels, insights } =
     data;
 
@@ -62,15 +64,15 @@ export function DashboardClient({
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-extrabold text-ink">
-              {isSingle ? selectedName : "تحليل شامل"}
+              {isSingle ? selectedName : t("dash.titleAll")}
             </h1>
             <p className="text-sm text-ink-soft mt-1 flex items-center gap-1.5">
               <span className="size-2 rounded-full bg-success inline-block" />
               {isSingle
-                ? "عرض بيانات فرع واحد"
-                : `${counts.submitted} من ${counts.branches} فروع سلّمت الداتا`}
+                ? t("dash.single")
+                : `${counts.submitted} ${t("dash.of")} ${counts.branches} ${t("dash.submitted")}`}
               {!isSingle && counts.missingCount > 0 && (
-                <span className="text-warning"> · ناقص {counts.missingCount}</span>
+                <span className="text-warning"> · {t("dash.missing")} {counts.missingCount}</span>
               )}
             </p>
           </div>
@@ -83,7 +85,7 @@ export function DashboardClient({
                 onChange={(e) => go({ branch: e.target.value })}
                 className="font-bold bg-transparent outline-none cursor-pointer"
               >
-                <option value="all">كل الفروع</option>
+                <option value="all">{t("dash.allBranches")}</option>
                 {branches.map((b) => (
                   <option key={b.id} value={b.id}>
                     {b.name}
@@ -101,10 +103,10 @@ export function DashboardClient({
                 className="font-bold bg-transparent outline-none"
               />
             </label>
-            <button onClick={() => router.refresh()} className="card size-10 grid place-items-center text-ink-soft hover:text-brand" aria-label="تحديث">
+            <button onClick={() => router.refresh()} className="card size-10 grid place-items-center text-ink-soft hover:text-brand" aria-label={t("refresh")}>
               <IconRefresh width={18} height={18} />
             </button>
-            <button onClick={() => window.print()} className="card size-10 grid place-items-center text-ink-soft hover:text-brand" aria-label="طباعة">
+            <button onClick={() => window.print()} className="card size-10 grid place-items-center text-ink-soft hover:text-brand" aria-label={t("print")}>
               <IconPrint width={18} height={18} />
             </button>
           </div>
@@ -113,38 +115,38 @@ export function DashboardClient({
         {/* Branch notes (single-branch view) */}
         {isSingle && branchNotes && (
           <div className="card p-4 border-r-4 border-r-brand">
-            <p className="text-xs font-bold text-ink-soft mb-1">ملاحظات الفرع</p>
+            <p className="text-xs font-bold text-ink-soft mb-1">{t("dash.branchNotes")}</p>
             <p className="text-ink">{branchNotes}</p>
           </div>
         )}
 
         {empty ? (
-          <EmptyState missing={counts.missing} single={isSingle} />
+          <EmptyState missing={counts.missing} single={isSingle} t={t} />
         ) : (
           <>
             {/* KPI cards */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <Kpi label="إجمالي الطلاب" value={counts.total.toLocaleString("en")} accent />
+              <Kpi label={t("kpi.total")} value={counts.total.toLocaleString("en")} accent />
               <Kpi
-                label="توزيع الجنس"
+                label={t("kpi.gender")}
                 value={`${counts.malePct}% / ${counts.femalePct}%`}
-                sub="ذكور / إناث"
+                sub={t("kpi.maleFemale")}
               />
-              <Kpi label="متوسط الأعمار" value={String(counts.avgAge)} />
-              <Kpi label="نسبة التجديد" value={`${counts.renewalRate}%`} />
-              <Kpi label="الفرع الأكثر نمواً" value={insights.highest?.name ?? "—"} small />
+              <Kpi label={t("kpi.avgAge")} value={String(counts.avgAge)} />
+              <Kpi label={t("kpi.renewal")} value={`${counts.renewalRate}%`} />
+              <Kpi label={t("kpi.topBranch")} value={insights.highest?.name ?? "—"} small />
             </div>
 
             {/* Demographics + branches */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card title="الديموغرافية (الجنس)">
+              <Card title={t("card.demographics")}>
                 <div className="relative h-56">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={[
-                          { name: "ذكور", value: counts.male },
-                          { name: "إناث", value: counts.female },
+                          { name: t("legend.male"), value: counts.male },
+                          { name: t("legend.female"), value: counts.female },
                         ]}
                         dataKey="value"
                         innerRadius={60}
@@ -164,17 +166,17 @@ export function DashboardClient({
                       <div className="text-2xl font-extrabold text-ink">
                         {counts.total.toLocaleString("en")}
                       </div>
-                      <div className="text-xs text-ink-soft">إجمالي</div>
+                      <div className="text-xs text-ink-soft">{t("kpi.total")}</div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-center gap-6 text-sm mt-2">
-                  <Legend color={NAVY} label="ذكور" pct={counts.malePct} />
-                  <Legend color={PINK} label="إناث" pct={counts.femalePct} />
+                  <Legend color={NAVY} label={t("legend.male")} pct={counts.malePct} />
+                  <Legend color={PINK} label={t("legend.female")} pct={counts.femalePct} />
                 </div>
               </Card>
 
-              <Card title="توزيع الطلاب حسب الفرع" className="lg:col-span-2">
+              <Card title={t("card.byBranch")} className="lg:col-span-2">
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={byBranch} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
@@ -182,7 +184,7 @@ export function DashboardClient({
                       <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#64748b" }} reversed />
                       <YAxis tick={{ fontSize: 11, fill: "#64748b" }} orientation="right" />
                       <Tooltip cursor={{ fill: "#eff4ff" }} />
-                      <Bar dataKey="total" name="المسجلين" fill={BRAND} radius={[6, 6, 0, 0]} />
+                      <Bar dataKey="total" name={t("kpi.total")} fill={BRAND} radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -191,18 +193,18 @@ export function DashboardClient({
 
             {/* Nationalities + Age */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card title="أهم الجنسيات">
+              <Card title={t("card.topNats")}>
                 <div className="space-y-3">
                   {topNationalities.map((n) => (
                     <ProgressRow key={n.name} label={n.name} pct={n.pct} />
                   ))}
                   {topNationalities.length === 0 && (
-                    <p className="text-ink-soft text-sm">لا توجد بيانات.</p>
+                    <p className="text-ink-soft text-sm">—</p>
                   )}
                 </div>
               </Card>
 
-              <Card title="الفئات العمرية">
+              <Card title={t("card.ageGroups")}>
                 <div className="space-y-3">
                   {ageGroups.map((a) => (
                     <ProgressRow key={a.key} label={a.label} pct={a.pct} />
@@ -212,7 +214,7 @@ export function DashboardClient({
             </div>
 
             {/* Levels */}
-            <Card title="توزيع المستويات">
+            <Card title={t("card.levels")}>
               <div className="h-56">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={levels} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
@@ -220,7 +222,7 @@ export function DashboardClient({
                     <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#64748b" }} reversed />
                     <YAxis tick={{ fontSize: 11, fill: "#64748b" }} orientation="right" />
                     <Tooltip cursor={{ fill: "#eff4ff" }} />
-                    <Bar dataKey="count" name="الطلاب" fill={NAVY} radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="count" name={t("kpi.total")} fill={NAVY} radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -230,30 +232,30 @@ export function DashboardClient({
             <div className="rounded-2xl bg-navy text-white p-6">
               <div className="flex items-center gap-2 mb-4">
                 <IconBulb className="text-warning" />
-                <h3 className="font-extrabold">رؤى ذكية (Auto Insights)</h3>
+                <h3 className="font-extrabold">{t("ins.title")}</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Insight
-                  label="أعلى معدل تسجيل"
+                  label={t("ins.highest")}
                   text={
                     insights.highest
-                      ? `${insights.highest.name} يتصدر بـ ${insights.highest.total.toLocaleString("en")} طالب`
+                      ? `${insights.highest.name} ${t("ins.leadsWith")} ${insights.highest.total.toLocaleString("en")} ${t("ins.student")}`
                       : "—"
                   }
                 />
                 <Insight
-                  label="الفرع الأكثر تنوعاً"
+                  label={t("ins.diverse")}
                   text={
                     insights.mostDiverse
-                      ? `${insights.mostDiverse.name} يضم ${insights.mostDiverse.uniqueNationalities} جنسية مختلفة`
+                      ? `${insights.mostDiverse.name} ${t("ins.has")} ${insights.mostDiverse.uniqueNationalities} ${t("ins.nationalities")}`
                       : "—"
                   }
                 />
                 <Insight
-                  label="أفضل استبقاء (Retention)"
+                  label={t("ins.retention")}
                   text={
                     insights.bestRetention
-                      ? `${insights.bestRetention.name} يحقق ${insights.bestRetention.renewalRate}% نسبة تجديد`
+                      ? `${insights.bestRetention.name} ${t("ins.achieves")} ${insights.bestRetention.renewalRate}% ${t("ins.renewalRate")}`
                       : "—"
                   }
                 />
@@ -345,24 +347,24 @@ function Insight({ label, text }: { label: string; text: string }) {
 function EmptyState({
   missing,
   single,
+  t,
 }: {
   missing: string[];
   single?: boolean;
+  t: (k: string) => string;
 }) {
   return (
     <div className="card p-12 text-center">
       <div className="size-14 rounded-full bg-canvas grid place-items-center mx-auto mb-4 text-ink-soft">
         <IconUsers width={28} height={28} />
       </div>
-      <h3 className="font-extrabold text-ink text-lg">لا توجد بيانات لهذا الشهر</h3>
+      <h3 className="font-extrabold text-ink text-lg">{t("empty.title")}</h3>
       <p className="text-ink-soft text-sm mt-2">
-        {single
-          ? "هذا الفرع لم يُدخل بياناته بعد لهذه الفترة."
-          : "لم يقم أي فرع بإدخال بياناته بعد لهذه الفترة."}
+        {single ? t("empty.single") : t("empty.all")}
       </p>
       {!single && missing.length > 0 && (
         <p className="text-ink-soft text-xs mt-3">
-          الفروع المتبقية: {missing.join("، ")}
+          {t("empty.remaining")}: {missing.join("، ")}
         </p>
       )}
     </div>

@@ -27,8 +27,9 @@ import {
   deleteUser,
   resetUserPassword,
 } from "@/app/actions/users";
-import { COURSE_TYPES, COURSE_TYPE_LABELS, type CourseType } from "@/lib/enums";
+import { COURSE_TYPES } from "@/lib/enums";
 import { IconGlobe, IconBook, IconUsers } from "@/components/icons";
+import { useT } from "@/components/i18n";
 
 type Branch = {
   id: string;
@@ -61,6 +62,7 @@ export function SettingsClient({
   coursePresets: CoursePreset[];
 }) {
   const router = useRouter();
+  const { t } = useT();
   const [pending, start] = useTransition();
   const [newName, setNewName] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
@@ -221,10 +223,8 @@ export function SettingsClient({
     <div className="min-h-screen">
       <div className="p-6 lg:p-8 space-y-6 mx-auto w-full max-w-[1400px]">
         <div>
-          <h1 className="text-3xl font-extrabold text-ink">إعدادات النظام</h1>
-          <p className="text-ink-soft mt-1">
-            إدارة الفروع، استيراد البيانات، والتحكم في قاعدة البيانات العامة.
-          </p>
+          <h1 className="text-3xl font-extrabold text-ink">{t("set.title")}</h1>
+          <p className="text-ink-soft mt-1">{t("set.subtitle")}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -233,7 +233,7 @@ export function SettingsClient({
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
                 <IconStore className="text-brand" />
-                <h2 className="font-extrabold text-ink">إدارة الفروع</h2>
+                <h2 className="font-extrabold text-ink">{t("set.branches")}</h2>
               </div>
             </div>
 
@@ -241,12 +241,12 @@ export function SettingsClient({
               <input
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                placeholder="اسم الفرع الجديد"
+                placeholder={t("set.newBranch")}
                 className="field flex-1"
                 onKeyDown={(e) => e.key === "Enter" && add()}
               />
               <button onClick={add} disabled={pending} className="btn-primary">
-                <IconPlus width={16} height={16} /> إضافة فرع
+                <IconPlus width={16} height={16} /> {t("set.addBranch")}
               </button>
             </div>
 
@@ -271,7 +271,7 @@ export function SettingsClient({
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-ink truncate">{b.name}</p>
                       <p className="text-xs text-ink-soft">
-                        {b.reports} تقرير · {b.users} مستخدم
+                        {b.reports} {t("set.report")} · {b.users} {t("set.user")}
                       </p>
                     </div>
                   )}
@@ -288,7 +288,7 @@ export function SettingsClient({
                       }}
                       className="text-ink-soft text-sm font-bold px-3 hover:text-brand"
                     >
-                      تعديل
+                      {t("set.edit")}
                     </button>
                   )}
                   <button
@@ -307,7 +307,7 @@ export function SettingsClient({
             <section className="card p-6">
               <div className="flex items-center gap-2 mb-4">
                 <IconUpload className="text-brand" />
-                <h2 className="font-extrabold text-ink">استيراد ملفات الفروع</h2>
+                <h2 className="font-extrabold text-ink">{t("set.import")}</h2>
               </div>
               <button
                 onClick={() => fileRef.current?.click()}
@@ -315,8 +315,8 @@ export function SettingsClient({
                 className="w-full rounded-xl border-2 border-dashed border-line p-6 text-center hover:border-brand transition"
               >
                 <IconUpload className="mx-auto text-brand mb-2" width={28} height={28} />
-                <p className="font-bold text-ink">اضغط لاختيار ملف</p>
-                <p className="text-xs text-ink-soft mt-1">الصيغة المدعومة: JSON</p>
+                <p className="font-bold text-ink">{t("set.chooseFile")}</p>
+                <p className="text-xs text-ink-soft mt-1">{t("set.importFmt")}</p>
               </button>
               <input
                 ref={fileRef}
@@ -335,18 +335,17 @@ export function SettingsClient({
             <section className="card p-6 border-danger/30 bg-danger-50">
               <div className="flex items-center gap-2 mb-3">
                 <IconWarning className="text-danger" />
-                <h2 className="font-extrabold text-danger">منطقة الخطر</h2>
+                <h2 className="font-extrabold text-danger">{t("set.danger")}</h2>
               </div>
               <p className="text-sm text-ink-soft leading-relaxed mb-4">
-                سيؤدي هذا الإجراء إلى حذف جميع البيانات المخزنة بشكل نهائي، بما في
-                ذلك التقارير الشهرية لكل الفروع. لا يمكن التراجع عن هذا الإجراء.
+                {t("set.dangerText")}
               </p>
               <button
                 onClick={wipe}
                 disabled={pending}
                 className="w-full rounded-full bg-danger px-5 py-2.5 font-bold text-white hover:bg-red-600 transition"
               >
-                مسح كل البيانات
+                {t("set.wipe")}
               </button>
             </section>
           </div>
@@ -356,25 +355,23 @@ export function SettingsClient({
         <section className="card p-6">
           <div className="flex items-center gap-2 mb-1">
             <IconUsers className="text-brand" />
-            <h2 className="font-extrabold text-ink">المستخدمون</h2>
+            <h2 className="font-extrabold text-ink">{t("set.users")}</h2>
           </div>
-          <p className="text-sm text-ink-soft mb-5">
-            أنشئ حسابات الدخول: موظف فرع (يضيف بيانات فرعه فقط) أو مسؤول.
-          </p>
+          <p className="text-sm text-ink-soft mb-5">{t("set.usersSub")}</p>
 
           {/* Add user form */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 mb-3">
             <input
               value={uEmail}
               onChange={(e) => setUEmail(e.target.value)}
-              placeholder="الإيميل (اسم المستخدم)"
+              placeholder={t("set.emailUser")}
               dir="ltr"
               className="field text-left lg:col-span-2"
             />
             <input
               value={uPass}
               onChange={(e) => setUPass(e.target.value)}
-              placeholder="كلمة المرور"
+              placeholder={t("password")}
               type="text"
               dir="ltr"
               className="field text-left"
@@ -384,8 +381,8 @@ export function SettingsClient({
               onChange={(e) => setURole(e.target.value)}
               className="field"
             >
-              <option value="BRANCH">موظف فرع</option>
-              <option value="ADMIN">مسؤول</option>
+              <option value="BRANCH">{t("set.roleBranch")}</option>
+              <option value="ADMIN">{t("set.roleAdmin")}</option>
             </select>
             {uRole === "BRANCH" ? (
               <select
@@ -393,7 +390,7 @@ export function SettingsClient({
                 onChange={(e) => setUBranch(e.target.value)}
                 className="field"
               >
-                <option value="">— اختر الفرع —</option>
+                <option value="">{t("set.chooseBranch")}</option>
                 {branches.map((b) => (
                   <option key={b.id} value={b.id}>
                     {b.name}
@@ -406,7 +403,7 @@ export function SettingsClient({
           </div>
           <div className="flex items-center gap-3 mb-5">
             <button onClick={addUser} disabled={pending} className="btn-primary">
-              <IconPlus width={16} height={16} /> إضافة مستخدم
+              <IconPlus width={16} height={16} /> {t("set.addUser")}
             </button>
             {uMsg && <span className="text-sm text-ink-soft">{uMsg}</span>}
           </div>
@@ -431,15 +428,15 @@ export function SettingsClient({
                   </p>
                   <p className="text-xs text-ink-soft">
                     {u.role === "ADMIN"
-                      ? "مسؤول النظام"
-                      : `موظف فرع${u.branchName ? " · " + u.branchName : ""}`}
+                      ? t("set.adminRole")
+                      : `${t("set.staffOf")}${u.branchName ? " · " + u.branchName : ""}`}
                   </p>
                 </div>
                 <button
                   onClick={() => resetPass(u.id)}
                   className="text-ink-soft text-sm font-bold px-3 hover:text-brand"
                 >
-                  كلمة المرور
+                  {t("password")}
                 </button>
                 {u.id !== currentUserId && (
                   <button
@@ -459,24 +456,22 @@ export function SettingsClient({
         <section className="card p-6">
           <div className="flex items-center gap-2 mb-1">
             <IconBook className="text-brand" />
-            <h2 className="font-extrabold text-ink">إعدادات نموذج الإدخال</h2>
+            <h2 className="font-extrabold text-ink">{t("set.formPresets")}</h2>
           </div>
-          <p className="text-sm text-ink-soft mb-5">
-            القيم الافتراضية اللي بتظهر جاهزة للموظف في فورم إدخال بيانات الفرع.
-          </p>
+          <p className="text-sm text-ink-soft mb-5">{t("set.formPresetsSub")}</p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Default nationalities */}
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <IconGlobe className="text-brand" width={18} height={18} />
-                <h3 className="font-bold text-ink">الجنسيات الافتراضية</h3>
+                <h3 className="font-bold text-ink">{t("set.defaultNats")}</h3>
               </div>
               <div className="flex gap-2 mb-3">
                 <input
                   value={newNat}
                   onChange={(e) => setNewNat(e.target.value)}
-                  placeholder="أضف جنسية"
+                  placeholder={t("set.addNat")}
                   className="field flex-1"
                   onKeyDown={(e) => e.key === "Enter" && addNat()}
                 />
@@ -486,7 +481,7 @@ export function SettingsClient({
               </div>
               <div className="flex flex-wrap gap-2">
                 {natPresets.length === 0 && (
-                  <p className="text-ink-soft text-sm">لا توجد قيم افتراضية.</p>
+                  <p className="text-ink-soft text-sm">{t("set.noDefaults")}</p>
                 )}
                 {natPresets.map((p) => (
                   <span
@@ -510,13 +505,13 @@ export function SettingsClient({
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <IconBook className="text-brand" width={18} height={18} />
-                <h3 className="font-bold text-ink">الكورسات الافتراضية</h3>
+                <h3 className="font-bold text-ink">{t("set.defaultCourses")}</h3>
               </div>
               <div className="flex gap-2 mb-3">
                 <input
                   value={newCourse}
                   onChange={(e) => setNewCourse(e.target.value)}
-                  placeholder="اسم الكورس"
+                  placeholder={t("set.courseNamePh")}
                   className="field flex-1 min-w-0"
                   onKeyDown={(e) => e.key === "Enter" && addCourse()}
                 />
@@ -525,9 +520,9 @@ export function SettingsClient({
                   onChange={(e) => setNewCourseType(e.target.value)}
                   className="field w-32 shrink-0"
                 >
-                  {COURSE_TYPES.map((t) => (
-                    <option key={t} value={t}>
-                      {COURSE_TYPE_LABELS[t as CourseType]}
+                  {COURSE_TYPES.map((ct) => (
+                    <option key={ct} value={ct}>
+                      {t(`ct.${ct}`)}
                     </option>
                   ))}
                 </select>
@@ -537,7 +532,7 @@ export function SettingsClient({
               </div>
               <div className="space-y-2">
                 {coursePresets.length === 0 && (
-                  <p className="text-ink-soft text-sm">لا توجد قيم افتراضية.</p>
+                  <p className="text-ink-soft text-sm">{t("set.noDefaults")}</p>
                 )}
                 {coursePresets.map((p) => (
                   <div
@@ -547,7 +542,7 @@ export function SettingsClient({
                     <div>
                       <span className="font-bold text-ink text-sm">{p.name}</span>
                       <span className="text-xs text-ink-soft mr-2">
-                        {COURSE_TYPE_LABELS[p.type as CourseType] ?? p.type}
+                        {t(`ct.${p.type}`)}
                       </span>
                     </div>
                     <button

@@ -1,19 +1,6 @@
 "use client";
 
-const MONTHS = [
-  "يناير",
-  "فبراير",
-  "مارس",
-  "أبريل",
-  "مايو",
-  "يونيو",
-  "يوليو",
-  "أغسطس",
-  "سبتمبر",
-  "أكتوبر",
-  "نوفمبر",
-  "ديسمبر",
-];
+import { useT, MONTHS } from "@/components/i18n";
 
 /** value/onChange use "YYYY-MM". Renders two friendly dropdowns. */
 export function MonthPicker({
@@ -25,6 +12,8 @@ export function MonthPicker({
   onChange: (v: string) => void;
   className?: string;
 }) {
+  const { lang } = useT();
+  const months = MONTHS[lang];
   const [y, m] = value.split("-");
   const year = parseInt(y || "0", 10) || new Date().getFullYear();
   const month = parseInt(m || "1", 10) || 1;
@@ -36,7 +25,7 @@ export function MonthPicker({
     onChange(`${yy}-${String(mm).padStart(2, "0")}`);
 
   const sel =
-    "rounded-xl border border-line bg-canvas px-3 py-2 font-bold text-ink outline-none transition focus:border-brand focus:bg-card cursor-pointer";
+    "rounded-xl border border-line bg-canvas px-3 py-2 font-bold text-ink outline-none transition focus:border-brand cursor-pointer";
 
   return (
     <div className={`flex gap-2 ${className}`}>
@@ -44,9 +33,9 @@ export function MonthPicker({
         value={month}
         onChange={(e) => set(year, parseInt(e.target.value, 10))}
         className={sel}
-        aria-label="الشهر"
+        aria-label="Month"
       >
-        {MONTHS.map((name, i) => (
+        {months.map((name, i) => (
           <option key={i} value={i + 1}>
             {name}
           </option>
@@ -56,7 +45,7 @@ export function MonthPicker({
         value={year}
         onChange={(e) => set(parseInt(e.target.value, 10), month)}
         className={sel}
-        aria-label="السنة"
+        aria-label="Year"
       >
         {years.map((yy) => (
           <option key={yy} value={yy}>
@@ -66,10 +55,4 @@ export function MonthPicker({
       </select>
     </div>
   );
-}
-
-export function formatPeriodAr(period: string) {
-  const [y, m] = period.split("-");
-  const mi = parseInt(m || "1", 10) - 1;
-  return `${MONTHS[mi] ?? ""} ${y}`;
 }

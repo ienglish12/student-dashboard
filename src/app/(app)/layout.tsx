@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { TopNav } from "@/components/top-nav";
-import { ThemeProvider } from "@/components/theme";
 import type { Role } from "@/lib/enums";
 
 export default async function AppLayout({
@@ -13,15 +12,13 @@ export default async function AppLayout({
   if (!user) redirect("/login");
 
   return (
-    <ThemeProvider>
-      <div className="min-h-screen flex flex-col">
-        <TopNav
-          role={user.role as Role}
-          branchName={user.branch?.name}
-          email={user.email}
-        />
-        <main className="flex-1 min-w-0">{children}</main>
-      </div>
-    </ThemeProvider>
+    <div className="min-h-screen flex flex-col">
+      <TopNav
+        role={user.role as Role}
+        branchName={user.branch?.name}
+        email={user.email}
+      />
+      <main className="flex-1 min-w-0">{children}</main>
+    </div>
   );
 }

@@ -1,15 +1,15 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { LoginForm } from "./login-form";
+import { LoginToggles, LoginTagline, LoginQuote } from "./login-chrome";
 
 export default async function LoginPage() {
-  // Validate against the DB (not just the cookie) so a stale session whose
-  // user no longer exists falls through to the form instead of looping.
   const user = await getCurrentUser();
   if (user) redirect(user.role === "ADMIN" ? "/dashboard" : "/entry");
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-b from-brand-50 to-canvas">
+      <LoginToggles />
       {/* Logo + brand */}
       <div className="flex flex-col items-center gap-3 mb-8">
         <div className="size-16 rounded-2xl bg-navy grid place-items-center text-white">
@@ -19,14 +19,11 @@ export default async function LoginPage() {
           </svg>
         </div>
         <h1 className="text-3xl font-extrabold text-ink">آي إنجلش</h1>
-        <p className="text-ink-soft text-sm">نظام تحليل البيانات الأكاديمي</p>
+        <LoginTagline />
       </div>
 
       <LoginForm />
-
-      <p className="mt-8 text-sm text-ink-soft italic text-center max-w-md">
-        &quot;البيانات هي لغة المستقبل، ونحن هنا لمساعدتك على فهمها بدقة.&quot;
-      </p>
+      <LoginQuote />
     </div>
   );
 }

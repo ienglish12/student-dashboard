@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Tajawal } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/providers";
 
 const tajawal = Tajawal({
   variable: "--font-tajawal",
@@ -23,12 +24,12 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.theme==='dark')document.documentElement.classList.add('dark')}catch(e){}`,
+            __html: `try{var d=document.documentElement;if(localStorage.theme==='dark')d.classList.add('dark');var l=localStorage.lang;if(l){d.lang=l;d.dir=l==='ar'?'rtl':'ltr';}}catch(e){}`,
           }}
         />
       </head>
       <body className="min-h-full antialiased font-sans bg-canvas text-ink">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
