@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { NUMERIC_FIELDS } from "@/lib/fields";
 import { isCourseType } from "@/lib/enums";
+import { applyImport } from "@/lib/import";
 
 async function requireAdmin() {
   const session = await getSession();
@@ -51,11 +51,6 @@ export async function deleteBranch(id: string) {
   return { ok: true };
 }
 
-const clamp = (v: unknown) => {
-  const n = Math.floor(Number(v));
-  return Number.isFinite(n) && n > 0 ? n : 0;
-};
-
 type ImportItem = {
   branchId?: string;
   slug?: string;
@@ -67,64 +62,10 @@ type ImportItem = {
 /** Upsert reports from a JSON array matching the export shape (SPEC §6/§7). */
 export async function importReports(items: ImportItem[]) {
   await requireAdmin();
-  if (!Array.isArray(items)) throw new Error("صيغة الملف غير صحيحة");
-
-  let imported = 0;
-  const errors: string[] = [];
-
-  for (const item of items) {
-    try {
-      // Resolve branch by id or slug.
-      let branchId = item.branchId;
-      if (!branchId && item.slug) {
-        const b = await prisma.branch.findUnique({ where: { slug: item.slug } });
-        branchId = b?.id;
-      }
-      if (!branchId || !item.period) {
-        errors.push(`سجل بدون فرع/فترة تم تخطيه`);
-        continue;
-      }
-
-      const numbers: Record<string, number> = {};
-      for (const k of NUMERIC_FIELDS) numbers[k] = clamp(item[k]);
-
-      const nationalities = (item.nationalities ?? [])
-        .map((n) => ({ name: String(n.name).trim(), count: clamp(n.count) }))
-        .filter((n) => n.name);
-      const courses = (item.courses ?? [])
-        .map((c) => ({
-          name: String(c.name).trim(),
-          type: isCourseType(c.type) ? c.type : "OTHER",
-          count: clamp(c.count),
-        }))
-        .filter((c) => c.name);
-
-      await prisma.$transaction(async (tx) => {
-        const report = await tx.monthlyReport.upsert({
-          where: { branchId_period: { branchId: branchId!, period: item.period } },
-          update: numbers,
-          create: { branchId: branchId!, period: item.period, ...numbers },
-        });
-        await tx.nationality.deleteMany({ where: { reportId: report.id } });
-        await tx.course.deleteMany({ where: { reportId: report.id } });
-        if (nationalities.length)
-          await tx.nationality.createMany({
-            data: nationalities.map((n) => ({ ...n, reportId: report.id })),
-          });
-        if (courses.length)
-          await tx.course.createMany({
-            data: courses.map((c) => ({ ...c, reportId: report.id })),
-          });
-      });
-      imported++;
-    } catch {
-      errors.push("فشل استيراد أحد السجلات");
-    }
-  }
-
+  const res = await applyImport(items as Parameters<typeof applyImport>[0]);
   revalidatePath("/dashboard");
   revalidatePath("/settings");
-  return { ok: true, imported, errors };
+  return res;
 }
 
 // ---- Form presets (admin-managed defaults shown in the branch form) ----
