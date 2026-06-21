@@ -15,6 +15,7 @@ export type SaveReportInput = {
   numbers: Partial<ReportNumbers>;
   nationalities: NationalityInput[];
   courses: CourseInput[];
+  notes?: string;
 };
 
 const clamp = (v: unknown) => {
@@ -65,13 +66,15 @@ export async function saveReport(input: SaveReportInput) {
     }))
     .filter((c) => c.name.length > 0);
 
+  const notes = (input.notes ?? "").trim();
+
   await prisma.$transaction(async (tx) => {
     const report = await tx.monthlyReport.upsert({
       where: {
         branchId_period: { branchId: input.branchId, period: input.period },
       },
-      update: numbers,
-      create: { branchId: input.branchId, period: input.period, ...numbers },
+      update: { ...numbers, notes },
+      create: { branchId: input.branchId, period: input.period, ...numbers, notes },
     });
 
     await tx.nationality.deleteMany({ where: { reportId: report.id } });

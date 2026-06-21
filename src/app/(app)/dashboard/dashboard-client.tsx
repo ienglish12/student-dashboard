@@ -29,15 +29,31 @@ const PINK = "#ec4899";
 export function DashboardClient({
   period,
   data,
+  branches,
+  branchFilter,
+  branchNotes,
 }: {
   period: string;
   data: Aggregated;
+  branches: { id: string; name: string }[];
+  branchFilter: string;
+  branchNotes: string | null;
 }) {
   const router = useRouter();
   const { counts, byBranch, topNationalities, ageGroups, levels, insights } =
     data;
 
   const empty = counts.total === 0;
+  const isSingle = branchFilter !== "all";
+  const selectedName =
+    branches.find((b) => b.id === branchFilter)?.name ?? "";
+
+  const go = (next: { period?: string; branch?: string }) => {
+    const params = new URLSearchParams();
+    params.set("period", next.period ?? period);
+    params.set("branch", next.branch ?? branchFilter);
+    router.push(`/dashboard?${params.toString()}`);
+  };
 
   return (
     <div className="min-h-screen">
@@ -55,34 +71,62 @@ export function DashboardClient({
       </header>
 
       <div className="p-6 lg:p-8 space-y-6">
-        {/* Title row */}
+        {/* Title + filters row */}
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-navy">تحليل شامل</h1>
+            <h1 className="text-3xl font-extrabold text-navy">
+              {isSingle ? selectedName : "تحليل شامل"}
+            </h1>
             <p className="text-sm text-ink-soft mt-1 flex items-center gap-1.5">
               <span className="size-2 rounded-full bg-success inline-block" />
-              {counts.submitted} من {counts.branches} فروع سلّمت الداتا
-              {counts.missingCount > 0 && (
-                <span className="text-warning">
-                  {" "}
-                  · ناقص {counts.missingCount}
-                </span>
+              {isSingle
+                ? "عرض بيانات فرع واحد"
+                : `${counts.submitted} من ${counts.branches} فروع سلّمت الداتا`}
+              {!isSingle && counts.missingCount > 0 && (
+                <span className="text-warning"> · ناقص {counts.missingCount}</span>
               )}
             </p>
           </div>
-          <label className="card flex items-center gap-2 px-4 py-2 no-print">
-            <IconCalendar className="text-brand" />
-            <input
-              type="month"
-              value={period}
-              onChange={(e) => router.push(`/dashboard?period=${e.target.value}`)}
-              className="font-bold bg-transparent outline-none"
-            />
-          </label>
+          <div className="flex items-center gap-2 no-print flex-wrap">
+            {/* Branch filter */}
+            <div className="card flex items-center gap-2 px-3 py-2">
+              <IconUsers className="text-brand" width={18} height={18} />
+              <select
+                value={branchFilter}
+                onChange={(e) => go({ branch: e.target.value })}
+                className="font-bold bg-transparent outline-none cursor-pointer"
+              >
+                <option value="all">كل الفروع</option>
+                {branches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Month filter */}
+            <label className="card flex items-center gap-2 px-4 py-2">
+              <IconCalendar className="text-brand" />
+              <input
+                type="month"
+                value={period}
+                onChange={(e) => go({ period: e.target.value })}
+                className="font-bold bg-transparent outline-none"
+              />
+            </label>
+          </div>
         </div>
 
+        {/* Branch notes (single-branch view) */}
+        {isSingle && branchNotes && (
+          <div className="card p-4 border-r-4 border-r-brand">
+            <p className="text-xs font-bold text-ink-soft mb-1">ملاحظات الفرع</p>
+            <p className="text-ink">{branchNotes}</p>
+          </div>
+        )}
+
         {empty ? (
-          <EmptyState missing={counts.missing} />
+          <EmptyState missing={counts.missing} single={isSingle} />
         ) : (
           <>
             {/* KPI cards */}
@@ -305,7 +349,13 @@ function Insight({ label, text }: { label: string; text: string }) {
   );
 }
 
-function EmptyState({ missing }: { missing: string[] }) {
+function EmptyState({
+  missing,
+  single,
+}: {
+  missing: string[];
+  single?: boolean;
+}) {
   return (
     <div className="card p-12 text-center">
       <div className="size-14 rounded-full bg-canvas grid place-items-center mx-auto mb-4 text-ink-soft">
@@ -313,9 +363,11 @@ function EmptyState({ missing }: { missing: string[] }) {
       </div>
       <h3 className="font-extrabold text-navy text-lg">لا توجد بيانات لهذا الشهر</h3>
       <p className="text-ink-soft text-sm mt-2">
-        لم يقم أي فرع بإدخال بياناته بعد لهذه الفترة.
+        {single
+          ? "هذا الفرع لم يُدخل بياناته بعد لهذه الفترة."
+          : "لم يقم أي فرع بإدخال بياناته بعد لهذه الفترة."}
       </p>
-      {missing.length > 0 && (
+      {!single && missing.length > 0 && (
         <p className="text-ink-soft text-xs mt-3">
           الفروع المتبقية: {missing.join("، ")}
         </p>

@@ -26,15 +26,13 @@ export function Sidebar({
   const initial = (email?.[0] ?? "U").toUpperCase();
   const roleLabel = role === "ADMIN" ? "مسؤول النظام" : "موظف فرع";
 
-  const items: NavItem[] = [
-    { href: "/entry", label: "إدخال فرع", icon: <IconEntry /> },
-  ];
-  if (role === "ADMIN") {
-    items.push(
-      { href: "/dashboard", label: "الداشبورد", icon: <IconDashboard /> },
-      { href: "/settings", label: "الإعدادات", icon: <IconSettings /> },
-    );
-  }
+  const items: NavItem[] =
+    role === "ADMIN"
+      ? [
+          { href: "/dashboard", label: "تحليل البيانات", icon: <IconDashboard /> },
+          { href: "/settings", label: "الإعدادات", icon: <IconSettings /> },
+        ]
+      : [{ href: "/entry", label: "إدخال البيانات", icon: <IconEntry /> }];
 
   return (
     <aside className="w-64 shrink-0 bg-card border-l border-line flex flex-col h-screen sticky top-0 no-print">

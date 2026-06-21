@@ -73,6 +73,9 @@ model MonthlyReport {
   // Renewals
   renewals Int @default(0)
 
+  // Free-text notes from the branch employee
+  notes String @default("")
+
   nationalities Nationality[]
   courses       Course[]
   updatedAt     DateTime      @updatedAt

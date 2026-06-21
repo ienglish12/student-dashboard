@@ -125,6 +125,7 @@ export const MonthlyReportScalarFieldEnum = {
   online: 'online',
   home: 'home',
   renewals: 'renewals',
+  notes: 'notes',
   updatedAt: 'updatedAt'
 } as const
 

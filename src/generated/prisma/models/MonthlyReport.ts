@@ -111,6 +111,7 @@ export type MonthlyReportMinAggregateOutputType = {
   online: number | null
   home: number | null
   renewals: number | null
+  notes: string | null
   updatedAt: Date | null
 }
 
@@ -143,6 +144,7 @@ export type MonthlyReportMaxAggregateOutputType = {
   online: number | null
   home: number | null
   renewals: number | null
+  notes: string | null
   updatedAt: Date | null
 }
 
@@ -175,6 +177,7 @@ export type MonthlyReportCountAggregateOutputType = {
   online: number
   home: number
   renewals: number
+  notes: number
   updatedAt: number
   _all: number
 }
@@ -265,6 +268,7 @@ export type MonthlyReportMinAggregateInputType = {
   online?: true
   home?: true
   renewals?: true
+  notes?: true
   updatedAt?: true
 }
 
@@ -297,6 +301,7 @@ export type MonthlyReportMaxAggregateInputType = {
   online?: true
   home?: true
   renewals?: true
+  notes?: true
   updatedAt?: true
 }
 
@@ -329,6 +334,7 @@ export type MonthlyReportCountAggregateInputType = {
   online?: true
   home?: true
   renewals?: true
+  notes?: true
   updatedAt?: true
   _all?: true
 }
@@ -448,6 +454,7 @@ export type MonthlyReportGroupByOutputType = {
   online: number
   home: number
   renewals: number
+  notes: string
   updatedAt: Date
   _count: MonthlyReportCountAggregateOutputType | null
   _avg: MonthlyReportAvgAggregateOutputType | null
@@ -503,6 +510,7 @@ export type MonthlyReportWhereInput = {
   online?: Prisma.IntFilter<"MonthlyReport"> | number
   home?: Prisma.IntFilter<"MonthlyReport"> | number
   renewals?: Prisma.IntFilter<"MonthlyReport"> | number
+  notes?: Prisma.StringFilter<"MonthlyReport"> | string
   updatedAt?: Prisma.DateTimeFilter<"MonthlyReport"> | Date | string
   branch?: Prisma.XOR<Prisma.BranchScalarRelationFilter, Prisma.BranchWhereInput>
   nationalities?: Prisma.NationalityListRelationFilter
@@ -538,6 +546,7 @@ export type MonthlyReportOrderByWithRelationInput = {
   online?: Prisma.SortOrder
   home?: Prisma.SortOrder
   renewals?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   branch?: Prisma.BranchOrderByWithRelationInput
   nationalities?: Prisma.NationalityOrderByRelationAggregateInput
@@ -577,6 +586,7 @@ export type MonthlyReportWhereUniqueInput = Prisma.AtLeast<{
   online?: Prisma.IntFilter<"MonthlyReport"> | number
   home?: Prisma.IntFilter<"MonthlyReport"> | number
   renewals?: Prisma.IntFilter<"MonthlyReport"> | number
+  notes?: Prisma.StringFilter<"MonthlyReport"> | string
   updatedAt?: Prisma.DateTimeFilter<"MonthlyReport"> | Date | string
   branch?: Prisma.XOR<Prisma.BranchScalarRelationFilter, Prisma.BranchWhereInput>
   nationalities?: Prisma.NationalityListRelationFilter
@@ -612,6 +622,7 @@ export type MonthlyReportOrderByWithAggregationInput = {
   online?: Prisma.SortOrder
   home?: Prisma.SortOrder
   renewals?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.MonthlyReportCountOrderByAggregateInput
   _avg?: Prisma.MonthlyReportAvgOrderByAggregateInput
@@ -652,6 +663,7 @@ export type MonthlyReportScalarWhereWithAggregatesInput = {
   online?: Prisma.IntWithAggregatesFilter<"MonthlyReport"> | number
   home?: Prisma.IntWithAggregatesFilter<"MonthlyReport"> | number
   renewals?: Prisma.IntWithAggregatesFilter<"MonthlyReport"> | number
+  notes?: Prisma.StringWithAggregatesFilter<"MonthlyReport"> | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"MonthlyReport"> | Date | string
 }
 
@@ -683,6 +695,7 @@ export type MonthlyReportCreateInput = {
   online?: number
   home?: number
   renewals?: number
+  notes?: string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutReportsInput
   nationalities?: Prisma.NationalityCreateNestedManyWithoutReportInput
@@ -718,6 +731,7 @@ export type MonthlyReportUncheckedCreateInput = {
   online?: number
   home?: number
   renewals?: number
+  notes?: string
   updatedAt?: Date | string
   nationalities?: Prisma.NationalityUncheckedCreateNestedManyWithoutReportInput
   courses?: Prisma.CourseUncheckedCreateNestedManyWithoutReportInput
@@ -751,6 +765,7 @@ export type MonthlyReportUpdateInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutReportsNestedInput
   nationalities?: Prisma.NationalityUpdateManyWithoutReportNestedInput
@@ -786,6 +801,7 @@ export type MonthlyReportUncheckedUpdateInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationalities?: Prisma.NationalityUncheckedUpdateManyWithoutReportNestedInput
   courses?: Prisma.CourseUncheckedUpdateManyWithoutReportNestedInput
@@ -820,6 +836,7 @@ export type MonthlyReportCreateManyInput = {
   online?: number
   home?: number
   renewals?: number
+  notes?: string
   updatedAt?: Date | string
 }
 
@@ -851,6 +868,7 @@ export type MonthlyReportUpdateManyMutationInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -883,6 +901,7 @@ export type MonthlyReportUncheckedUpdateManyInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -930,6 +949,7 @@ export type MonthlyReportCountOrderByAggregateInput = {
   online?: Prisma.SortOrder
   home?: Prisma.SortOrder
   renewals?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -990,6 +1010,7 @@ export type MonthlyReportMaxOrderByAggregateInput = {
   online?: Prisma.SortOrder
   home?: Prisma.SortOrder
   renewals?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -1022,6 +1043,7 @@ export type MonthlyReportMinOrderByAggregateInput = {
   online?: Prisma.SortOrder
   home?: Prisma.SortOrder
   renewals?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -1168,6 +1190,7 @@ export type MonthlyReportCreateWithoutBranchInput = {
   online?: number
   home?: number
   renewals?: number
+  notes?: string
   updatedAt?: Date | string
   nationalities?: Prisma.NationalityCreateNestedManyWithoutReportInput
   courses?: Prisma.CourseCreateNestedManyWithoutReportInput
@@ -1201,6 +1224,7 @@ export type MonthlyReportUncheckedCreateWithoutBranchInput = {
   online?: number
   home?: number
   renewals?: number
+  notes?: string
   updatedAt?: Date | string
   nationalities?: Prisma.NationalityUncheckedCreateNestedManyWithoutReportInput
   courses?: Prisma.CourseUncheckedCreateNestedManyWithoutReportInput
@@ -1264,6 +1288,7 @@ export type MonthlyReportScalarWhereInput = {
   online?: Prisma.IntFilter<"MonthlyReport"> | number
   home?: Prisma.IntFilter<"MonthlyReport"> | number
   renewals?: Prisma.IntFilter<"MonthlyReport"> | number
+  notes?: Prisma.StringFilter<"MonthlyReport"> | string
   updatedAt?: Prisma.DateTimeFilter<"MonthlyReport"> | Date | string
 }
 
@@ -1295,6 +1320,7 @@ export type MonthlyReportCreateWithoutNationalitiesInput = {
   online?: number
   home?: number
   renewals?: number
+  notes?: string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutReportsInput
   courses?: Prisma.CourseCreateNestedManyWithoutReportInput
@@ -1329,6 +1355,7 @@ export type MonthlyReportUncheckedCreateWithoutNationalitiesInput = {
   online?: number
   home?: number
   renewals?: number
+  notes?: string
   updatedAt?: Date | string
   courses?: Prisma.CourseUncheckedCreateNestedManyWithoutReportInput
 }
@@ -1377,6 +1404,7 @@ export type MonthlyReportUpdateWithoutNationalitiesInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutReportsNestedInput
   courses?: Prisma.CourseUpdateManyWithoutReportNestedInput
@@ -1411,6 +1439,7 @@ export type MonthlyReportUncheckedUpdateWithoutNationalitiesInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   courses?: Prisma.CourseUncheckedUpdateManyWithoutReportNestedInput
 }
@@ -1443,6 +1472,7 @@ export type MonthlyReportCreateWithoutCoursesInput = {
   online?: number
   home?: number
   renewals?: number
+  notes?: string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutReportsInput
   nationalities?: Prisma.NationalityCreateNestedManyWithoutReportInput
@@ -1477,6 +1507,7 @@ export type MonthlyReportUncheckedCreateWithoutCoursesInput = {
   online?: number
   home?: number
   renewals?: number
+  notes?: string
   updatedAt?: Date | string
   nationalities?: Prisma.NationalityUncheckedCreateNestedManyWithoutReportInput
 }
@@ -1525,6 +1556,7 @@ export type MonthlyReportUpdateWithoutCoursesInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutReportsNestedInput
   nationalities?: Prisma.NationalityUpdateManyWithoutReportNestedInput
@@ -1559,6 +1591,7 @@ export type MonthlyReportUncheckedUpdateWithoutCoursesInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationalities?: Prisma.NationalityUncheckedUpdateManyWithoutReportNestedInput
 }
@@ -1591,6 +1624,7 @@ export type MonthlyReportCreateManyBranchInput = {
   online?: number
   home?: number
   renewals?: number
+  notes?: string
   updatedAt?: Date | string
 }
 
@@ -1622,6 +1656,7 @@ export type MonthlyReportUpdateWithoutBranchInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationalities?: Prisma.NationalityUpdateManyWithoutReportNestedInput
   courses?: Prisma.CourseUpdateManyWithoutReportNestedInput
@@ -1655,6 +1690,7 @@ export type MonthlyReportUncheckedUpdateWithoutBranchInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationalities?: Prisma.NationalityUncheckedUpdateManyWithoutReportNestedInput
   courses?: Prisma.CourseUncheckedUpdateManyWithoutReportNestedInput
@@ -1688,6 +1724,7 @@ export type MonthlyReportUncheckedUpdateManyWithoutBranchInput = {
   online?: Prisma.IntFieldUpdateOperationsInput | number
   home?: Prisma.IntFieldUpdateOperationsInput | number
   renewals?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1760,6 +1797,7 @@ export type MonthlyReportSelect<ExtArgs extends runtime.Types.Extensions.Interna
   online?: boolean
   home?: boolean
   renewals?: boolean
+  notes?: boolean
   updatedAt?: boolean
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
   nationalities?: boolean | Prisma.MonthlyReport$nationalitiesArgs<ExtArgs>
@@ -1796,6 +1834,7 @@ export type MonthlyReportSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   online?: boolean
   home?: boolean
   renewals?: boolean
+  notes?: boolean
   updatedAt?: boolean
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["monthlyReport"]>
@@ -1829,6 +1868,7 @@ export type MonthlyReportSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   online?: boolean
   home?: boolean
   renewals?: boolean
+  notes?: boolean
   updatedAt?: boolean
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["monthlyReport"]>
@@ -1862,10 +1902,11 @@ export type MonthlyReportSelectScalar = {
   online?: boolean
   home?: boolean
   renewals?: boolean
+  notes?: boolean
   updatedAt?: boolean
 }
 
-export type MonthlyReportOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "branchId" | "period" | "male" | "female" | "ageKids" | "ageTeens" | "ageYoungAdults" | "ageAdults" | "ageSeniors" | "classGroupAdult" | "classVipAdult" | "classVipKid" | "classOther" | "levelFoundation" | "level1" | "level2" | "level3" | "level4" | "level5" | "level6" | "level7" | "level8" | "level9" | "onsite" | "online" | "home" | "renewals" | "updatedAt", ExtArgs["result"]["monthlyReport"]>
+export type MonthlyReportOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "branchId" | "period" | "male" | "female" | "ageKids" | "ageTeens" | "ageYoungAdults" | "ageAdults" | "ageSeniors" | "classGroupAdult" | "classVipAdult" | "classVipKid" | "classOther" | "levelFoundation" | "level1" | "level2" | "level3" | "level4" | "level5" | "level6" | "level7" | "level8" | "level9" | "onsite" | "online" | "home" | "renewals" | "notes" | "updatedAt", ExtArgs["result"]["monthlyReport"]>
 export type MonthlyReportInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
   nationalities?: boolean | Prisma.MonthlyReport$nationalitiesArgs<ExtArgs>
@@ -1915,6 +1956,7 @@ export type $MonthlyReportPayload<ExtArgs extends runtime.Types.Extensions.Inter
     online: number
     home: number
     renewals: number
+    notes: string
     updatedAt: Date
   }, ExtArgs["result"]["monthlyReport"]>
   composites: {}
@@ -2370,6 +2412,7 @@ export interface MonthlyReportFieldRefs {
   readonly online: Prisma.FieldRef<"MonthlyReport", 'Int'>
   readonly home: Prisma.FieldRef<"MonthlyReport", 'Int'>
   readonly renewals: Prisma.FieldRef<"MonthlyReport", 'Int'>
+  readonly notes: Prisma.FieldRef<"MonthlyReport", 'String'>
   readonly updatedAt: Prisma.FieldRef<"MonthlyReport", 'DateTime'>
 }
     
