@@ -164,7 +164,11 @@ export const T: Dict = {
   "set.report": { ar: "تقرير", en: "reports" },
   "set.user": { ar: "مستخدم", en: "users" },
   "set.edit": { ar: "تعديل", en: "Edit" },
-  "set.import": { ar: "استيراد ملفات الفروع", en: "Import branch files" },
+  "set.import": { ar: "استيراد كشف الطلاب", en: "Import student roster" },
+  "set.importHint": {
+    ar: "اختر الفرع وارفع ملف CSV (كشف الطلاب) — السستم يحلّله ويجمّعه تلقائياً حسب الشهر.",
+    en: "Pick a branch and upload the student CSV — it's auto-aggregated by month.",
+  },
   "set.chooseFile": { ar: "اضغط لاختيار ملف", en: "Click to choose a file" },
   "set.importFmt": { ar: "الصيغة المدعومة: JSON", en: "Supported format: JSON" },
   "set.danger": { ar: "منطقة الخطر", en: "Danger zone" },

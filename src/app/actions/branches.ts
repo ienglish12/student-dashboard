@@ -68,6 +68,34 @@ export async function importReports(items: ImportItem[]) {
   return res;
 }
 
+/** Import a per-student roster CSV for one branch (auto-aggregates by month). */
+export async function importStudentSheet(branchId: string, csv: string) {
+  await requireAdmin();
+  if (!branchId) throw new Error("اختر الفرع أولاً");
+  const { aggregateStudentCsv } = await import("@/lib/student-csv");
+  const { rows, totalStudents, skipped } = aggregateStudentCsv(csv);
+  if (rows.length === 0) {
+    return { ok: false, totalStudents: 0, skipped, periods: [] as string[], imported: 0 };
+  }
+  const items = rows.map((r) => ({
+    branchId,
+    period: r.period,
+    ...r.numbers,
+    nationalities: r.nationalities,
+    courses: r.courses,
+  }));
+  const res = await applyImport(items as Parameters<typeof applyImport>[0]);
+  revalidatePath("/dashboard");
+  revalidatePath("/settings");
+  return {
+    ok: true,
+    totalStudents,
+    skipped,
+    periods: rows.map((r) => r.period),
+    imported: res.imported,
+  };
+}
+
 // ---- Form presets (admin-managed defaults shown in the branch form) ----
 
 export async function addNationalityPreset(name: string) {

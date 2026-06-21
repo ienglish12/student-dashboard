@@ -15,7 +15,7 @@ import {
   createBranch,
   updateBranch,
   deleteBranch,
-  importReports,
+  importStudentSheet,
   wipeAllData,
   addNationalityPreset,
   removeNationalityPreset,
@@ -68,6 +68,7 @@ export function SettingsClient({
   const [editId, setEditId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [importMsg, setImportMsg] = useState<string | null>(null);
+  const [impBranch, setImpBranch] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const [newNat, setNewNat] = useState("");
   const [newCourse, setNewCourse] = useState("");
@@ -189,20 +190,31 @@ export function SettingsClient({
     const file = e.target.files?.[0];
     if (!file) return;
     setImportMsg(null);
+    if (!impBranch) {
+      setImportMsg("اختر الفرع أولاً قبل رفع الملف.");
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
     try {
       const text = await file.text();
-      const json = JSON.parse(text);
-      const items = Array.isArray(json) ? json : [json];
       start(async () => {
-        const res = await importReports(items);
-        setImportMsg(
-          `تم استيراد ${res.imported} سجل` +
-            (res.errors.length ? ` (${res.errors.length} تخطٍّ)` : ""),
-        );
-        refresh();
+        try {
+          const res = await importStudentSheet(impBranch, text);
+          if (!res.ok) {
+            setImportMsg("لم يتم العثور على بيانات صالحة في الملف.");
+          } else {
+            setImportMsg(
+              `✓ تم تحليل ${res.totalStudents} طالب وحفظها لشهور: ${res.periods.join("، ")}` +
+                (res.skipped ? ` (تم تخطّي ${res.skipped} صف بدون بيانات)` : ""),
+            );
+          }
+          refresh();
+        } catch (err) {
+          setImportMsg(err instanceof Error ? err.message : "تعذّر استيراد الملف.");
+        }
       });
     } catch {
-      setImportMsg("تعذّر قراءة الملف. تأكد أنه JSON صالح.");
+      setImportMsg("تعذّر قراءة الملف.");
     } finally {
       if (fileRef.current) fileRef.current.value = "";
     }
@@ -309,19 +321,32 @@ export function SettingsClient({
                 <IconUpload className="text-brand" />
                 <h2 className="font-extrabold text-ink">{t("set.import")}</h2>
               </div>
+              <p className="text-xs text-ink-soft mb-3">{t("set.importHint")}</p>
+              <select
+                value={impBranch}
+                onChange={(e) => setImpBranch(e.target.value)}
+                className="field w-full mb-3"
+              >
+                <option value="">{t("set.chooseBranch")}</option>
+                {branches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
               <button
                 onClick={() => fileRef.current?.click()}
-                disabled={pending}
-                className="w-full rounded-xl border-2 border-dashed border-line p-6 text-center hover:border-brand transition"
+                disabled={pending || !impBranch}
+                className="w-full rounded-xl border-2 border-dashed border-line p-6 text-center hover:border-brand transition disabled:opacity-50"
               >
                 <IconUpload className="mx-auto text-brand mb-2" width={28} height={28} />
                 <p className="font-bold text-ink">{t("set.chooseFile")}</p>
-                <p className="text-xs text-ink-soft mt-1">{t("set.importFmt")}</p>
+                <p className="text-xs text-ink-soft mt-1">CSV</p>
               </button>
               <input
                 ref={fileRef}
                 type="file"
-                accept=".json,application/json"
+                accept=".csv,text/csv"
                 onChange={onFile}
                 className="hidden"
               />
