@@ -171,3 +171,18 @@ export function IconBulb(p: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+export function IconClipboard(p: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...p}>
+      <rect x="8" y="2" width="8" height="4" rx="1" />
+      <path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3M9 12l2 2 4-4" />
+    </svg>
+  );
+}
+export function IconCompare(p: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...p}>
+      <path d="M3 6h7M3 12h7M3 18h4M21 6h-7M21 12h-5M21 18h-7" />
+    </svg>
+  );
+}

@@ -5,7 +5,13 @@ import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/actions/auth";
 import { ThemeToggle } from "@/components/theme";
 import { useT, LangToggle } from "@/components/i18n";
-import { IconDashboard, IconSettings, IconLogout } from "@/components/icons";
+import {
+  IconDashboard,
+  IconSettings,
+  IconLogout,
+  IconClipboard,
+  IconCompare,
+} from "@/components/icons";
 import type { Role } from "@/lib/enums";
 
 export function TopNav({
@@ -25,6 +31,8 @@ export function TopNav({
     role === "ADMIN"
       ? [
           { href: "/dashboard", label: t("nav.analysis"), icon: <IconDashboard width={18} height={18} /> },
+          { href: "/compare", label: t("nav.compare"), icon: <IconCompare width={18} height={18} /> },
+          { href: "/reports", label: t("nav.reports"), icon: <IconClipboard width={18} height={18} /> },
           { href: "/settings", label: t("nav.settings"), icon: <IconSettings width={18} height={18} /> },
         ]
       : [];

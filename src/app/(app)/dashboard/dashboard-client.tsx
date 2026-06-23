@@ -78,22 +78,6 @@ export function DashboardClient({
             </p>
           </div>
           <div className="flex items-center gap-2 no-print flex-wrap">
-            {/* Branch filter */}
-            <div className="card flex items-center gap-2 px-3 py-2">
-              <IconUsers className="text-brand" width={18} height={18} />
-              <select
-                value={branchFilter}
-                onChange={(e) => go({ branch: e.target.value })}
-                className="font-bold bg-transparent outline-none cursor-pointer"
-              >
-                <option value="all">{t("dash.allBranches")}</option>
-                {branches.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.name}
-                  </option>
-                ))}
-              </select>
-            </div>
             {/* Month filter */}
             <div className="card flex items-center gap-2 px-3 py-2">
               <IconCalendar className="text-brand" />
@@ -106,6 +90,22 @@ export function DashboardClient({
               <IconPrint width={18} height={18} />
             </button>
           </div>
+        </div>
+
+        {/* Horizontal branch filter */}
+        <div className="flex gap-2 overflow-x-auto pb-1 no-print -mx-1 px-1">
+          <FilterPill active={branchFilter === "all"} onClick={() => go({ branch: "all" })}>
+            {t("dash.allBranches")}
+          </FilterPill>
+          {branches.map((b) => (
+            <FilterPill
+              key={b.id}
+              active={branchFilter === b.id}
+              onClick={() => go({ branch: b.id })}
+            >
+              {b.name}
+            </FilterPill>
+          ))}
         </div>
 
         {/* Branch notes (single-branch view) */}
@@ -261,6 +261,29 @@ export function DashboardClient({
         )}
       </div>
     </div>
+  );
+}
+
+function FilterPill({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold border transition ${
+        active
+          ? "bg-brand text-white border-brand"
+          : "bg-card text-ink-soft border-line hover:border-brand hover:text-brand"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
