@@ -166,6 +166,7 @@ export const T: Dict = {
   "dash.consultants": { ar: "أداء المستشارين", en: "Consultant performance" },
   "dash.packages": { ar: "نوع الباقة", en: "Package type" },
   "dash.byDay": { ar: "التسجيلات حسب اليوم", en: "Enrollments by day" },
+  "dash.renewalsByBranch": { ar: "معدّل التجديد حسب الفرع", en: "Renewal rate by branch" },
   "pkg.hours": { ar: "ساعات", en: "Hours" },
   "pkg.levels": { ar: "مستويات", en: "Levels" },
   "pkg.both": { ar: "ساعات + مستويات", en: "Hours + Levels" },

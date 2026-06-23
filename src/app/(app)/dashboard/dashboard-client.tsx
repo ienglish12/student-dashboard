@@ -277,6 +277,23 @@ export function DashboardClient({
               </Card>
             </div>
 
+            {/* Renewals by branch */}
+            <Card title={t("dash.renewalsByBranch")}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                {[...byBranch]
+                  .sort((a, b) => b.renewalRate - a.renewalRate)
+                  .map((b) => (
+                    <ProgressRow
+                      key={b.branchId}
+                      label={b.name}
+                      pct={b.renewalRate}
+                      count={b.renewals}
+                    />
+                  ))}
+                {byBranch.length === 0 && <p className="text-ink-soft text-sm">—</p>}
+              </div>
+            </Card>
+
             {/* Roster-derived analytics (consultants / packages / by-day) */}
             {data.extras.hasExtras && (
               <>
