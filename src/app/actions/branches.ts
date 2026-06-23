@@ -69,7 +69,11 @@ export async function importReports(items: ImportItem[]) {
 }
 
 /** Import a per-student roster CSV for one branch (auto-aggregates by month). */
-export async function importStudentSheet(branchId: string, csv: string) {
+export async function importStudentSheet(
+  branchId: string,
+  csv: string,
+  filename = "roster.csv",
+) {
   await requireAdmin();
   if (!branchId) throw new Error("اختر الفرع أولاً");
   const { aggregateStudentCsv } = await import("@/lib/student-csv");
@@ -85,7 +89,18 @@ export async function importStudentSheet(branchId: string, csv: string) {
     courses: r.courses,
   }));
   const res = await applyImport(items as Parameters<typeof applyImport>[0]);
+
+  // Keep the raw file per (branch, period) so it can be reviewed/downloaded.
+  for (const r of rows) {
+    const count = r.numbers.male + r.numbers.female;
+    await prisma.upload.deleteMany({ where: { branchId, period: r.period } });
+    await prisma.upload.create({
+      data: { branchId, period: r.period, filename, studentCount: count, content: csv },
+    });
+  }
+
   revalidatePath("/dashboard");
+  revalidatePath("/reports");
   revalidatePath("/settings");
   return {
     ok: true,

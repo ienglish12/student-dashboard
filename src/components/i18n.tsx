@@ -44,6 +44,8 @@ export const T: Dict = {
   "rep.missing": { ar: "ناقص", en: "missing" },
   "rep.noData": { ar: "لا توجد أي تقارير بعد.", en: "No reports yet." },
   "rep.total": { ar: "الإجمالي", en: "Total" },
+  "rep.student": { ar: "طالب", en: "students" },
+  "rep.view": { ar: "عرض", en: "View" },
   "role.admin": { ar: "مسؤول", en: "Admin" },
   "role.branch": { ar: "موظف", en: "Staff" },
   logout: { ar: "تسجيل الخروج", en: "Log out" },

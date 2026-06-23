@@ -1,10 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  CartesianGrid,
+} from "recharts";
 import { aggregate, type ReportWithRelations } from "@/lib/aggregate";
 import { useT, MONTHS } from "@/components/i18n";
 import { MonthPicker } from "@/components/month-picker";
 import { IconCompare } from "@/components/icons";
+
+const BRAND = "#1d4ed8";
+const NAVY = "#64748b";
 
 export type CmpReport = ReportWithRelations & { period: string };
 
@@ -62,6 +75,20 @@ export function CompareClient({
 
   const A = useMemo(() => agg(a), [a, branch, reports]); // eslint-disable-line react-hooks/exhaustive-deps
   const B = useMemo(() => agg(b), [b, branch, reports]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const labelA = specLabel(a, lang);
+  const labelB = specLabel(b, lang);
+
+  const overviewData = [
+    { name: t("kpi.total"), [labelA]: A.counts.total, [labelB]: B.counts.total },
+    { name: t("legend.male"), [labelA]: A.counts.male, [labelB]: B.counts.male },
+    { name: t("legend.female"), [labelA]: A.counts.female, [labelB]: B.counts.female },
+  ];
+  const ageData = A.ageGroups.map((g, i) => ({
+    name: g.label,
+    [labelA]: g.count,
+    [labelB]: B.ageGroups[i]?.count ?? 0,
+  }));
 
   const metrics: { label: string; a: number; b: number; suffix?: string; pp?: boolean }[] = [
     { label: t("kpi.total"), a: A.counts.total, b: B.counts.total },
@@ -140,6 +167,42 @@ export function CompareClient({
               </div>
             );
           })}
+        </div>
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="card p-5">
+            <h3 className="font-extrabold text-ink mb-4">{t("kpi.total")} / {t("legend.male")} / {t("legend.female")}</h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={overviewData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} />
+                  <YAxis tick={{ fontSize: 11, fill: "var(--ink-soft)" }} />
+                  <Tooltip cursor={{ fill: "var(--brand-50)" }} />
+                  <Legend />
+                  <Bar dataKey={labelA} fill={BRAND} radius={[6, 6, 0, 0]} />
+                  <Bar dataKey={labelB} fill={NAVY} radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className="card p-5">
+            <h3 className="font-extrabold text-ink mb-4">{t("card.ageGroups")}</h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={ageData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} />
+                  <YAxis tick={{ fontSize: 11, fill: "var(--ink-soft)" }} />
+                  <Tooltip cursor={{ fill: "var(--brand-50)" }} />
+                  <Legend />
+                  <Bar dataKey={labelA} fill={BRAND} radius={[6, 6, 0, 0]} />
+                  <Bar dataKey={labelB} fill={NAVY} radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
     </div>

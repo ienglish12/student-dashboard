@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   Branch: 'Branch',
   MonthlyReport: 'MonthlyReport',
+  Upload: 'Upload',
   Nationality: 'Nationality',
   Course: 'Course',
   NationalityPreset: 'NationalityPreset',
@@ -130,6 +131,19 @@ export const MonthlyReportScalarFieldEnum = {
 } as const
 
 export type MonthlyReportScalarFieldEnum = (typeof MonthlyReportScalarFieldEnum)[keyof typeof MonthlyReportScalarFieldEnum]
+
+
+export const UploadScalarFieldEnum = {
+  id: 'id',
+  branchId: 'branchId',
+  period: 'period',
+  filename: 'filename',
+  studentCount: 'studentCount',
+  content: 'content',
+  uploadedAt: 'uploadedAt'
+} as const
+
+export type UploadScalarFieldEnum = (typeof UploadScalarFieldEnum)[keyof typeof UploadScalarFieldEnum]
 
 
 export const NationalityScalarFieldEnum = {

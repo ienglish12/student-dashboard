@@ -33,6 +33,11 @@ export type Branch = Prisma.BranchModel
  */
 export type MonthlyReport = Prisma.MonthlyReportModel
 /**
+ * Model Upload
+ * 
+ */
+export type Upload = Prisma.UploadModel
+/**
  * Model Nationality
  * 
  */

@@ -199,7 +199,7 @@ export function SettingsClient({
       const text = await file.text();
       start(async () => {
         try {
-          const res = await importStudentSheet(impBranch, text);
+          const res = await importStudentSheet(impBranch, text, file.name);
           if (!res.ok) {
             setImportMsg("لم يتم العثور على بيانات صالحة في الملف.");
           } else {

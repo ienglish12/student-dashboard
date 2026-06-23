@@ -28,6 +28,7 @@ model Branch {
   slug    String          @unique
   users   User[]
   reports MonthlyReport[]
+  uploads Upload[]
 }
 
 model MonthlyReport {
@@ -81,6 +82,21 @@ model MonthlyReport {
   updatedAt     DateTime      @updatedAt
 
   @@unique([branchId, period]) // one record per branch per month
+}
+
+// Raw uploaded roster files, kept per (branch, period) so the admin can
+// re-download / review the source CSV behind each month's figures.
+model Upload {
+  id           String   @id @default(cuid())
+  branchId     String
+  branch       Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  period       String
+  filename     String
+  studentCount Int      @default(0)
+  content      String
+  uploadedAt   DateTime @default(now())
+
+  @@index([branchId, period])
 }
 
 model Nationality {

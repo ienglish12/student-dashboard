@@ -168,6 +168,7 @@ export type BranchWhereInput = {
   slug?: Prisma.StringFilter<"Branch"> | string
   users?: Prisma.UserListRelationFilter
   reports?: Prisma.MonthlyReportListRelationFilter
+  uploads?: Prisma.UploadListRelationFilter
 }
 
 export type BranchOrderByWithRelationInput = {
@@ -176,6 +177,7 @@ export type BranchOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   reports?: Prisma.MonthlyReportOrderByRelationAggregateInput
+  uploads?: Prisma.UploadOrderByRelationAggregateInput
 }
 
 export type BranchWhereUniqueInput = Prisma.AtLeast<{
@@ -187,6 +189,7 @@ export type BranchWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Branch"> | string
   users?: Prisma.UserListRelationFilter
   reports?: Prisma.MonthlyReportListRelationFilter
+  uploads?: Prisma.UploadListRelationFilter
 }, "id" | "slug">
 
 export type BranchOrderByWithAggregationInput = {
@@ -213,6 +216,7 @@ export type BranchCreateInput = {
   slug: string
   users?: Prisma.UserCreateNestedManyWithoutBranchInput
   reports?: Prisma.MonthlyReportCreateNestedManyWithoutBranchInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutBranchInput
 }
 
 export type BranchUncheckedCreateInput = {
@@ -221,6 +225,7 @@ export type BranchUncheckedCreateInput = {
   slug: string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutBranchInput
   reports?: Prisma.MonthlyReportUncheckedCreateNestedManyWithoutBranchInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutBranchInput
 }
 
 export type BranchUpdateInput = {
@@ -229,6 +234,7 @@ export type BranchUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   users?: Prisma.UserUpdateManyWithoutBranchNestedInput
   reports?: Prisma.MonthlyReportUpdateManyWithoutBranchNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchUncheckedUpdateInput = {
@@ -237,6 +243,7 @@ export type BranchUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   users?: Prisma.UserUncheckedUpdateManyWithoutBranchNestedInput
   reports?: Prisma.MonthlyReportUncheckedUpdateManyWithoutBranchNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchCreateManyInput = {
@@ -315,11 +322,26 @@ export type BranchUpdateOneRequiredWithoutReportsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutReportsInput, Prisma.BranchUpdateWithoutReportsInput>, Prisma.BranchUncheckedUpdateWithoutReportsInput>
 }
 
+export type BranchCreateNestedOneWithoutUploadsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutUploadsInput, Prisma.BranchUncheckedCreateWithoutUploadsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutUploadsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneRequiredWithoutUploadsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutUploadsInput, Prisma.BranchUncheckedCreateWithoutUploadsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutUploadsInput
+  upsert?: Prisma.BranchUpsertWithoutUploadsInput
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutUploadsInput, Prisma.BranchUpdateWithoutUploadsInput>, Prisma.BranchUncheckedUpdateWithoutUploadsInput>
+}
+
 export type BranchCreateWithoutUsersInput = {
   id?: string
   name: string
   slug: string
   reports?: Prisma.MonthlyReportCreateNestedManyWithoutBranchInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutBranchInput
 }
 
 export type BranchUncheckedCreateWithoutUsersInput = {
@@ -327,6 +349,7 @@ export type BranchUncheckedCreateWithoutUsersInput = {
   name: string
   slug: string
   reports?: Prisma.MonthlyReportUncheckedCreateNestedManyWithoutBranchInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutBranchInput
 }
 
 export type BranchCreateOrConnectWithoutUsersInput = {
@@ -350,6 +373,7 @@ export type BranchUpdateWithoutUsersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   reports?: Prisma.MonthlyReportUpdateManyWithoutBranchNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutUsersInput = {
@@ -357,6 +381,7 @@ export type BranchUncheckedUpdateWithoutUsersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   reports?: Prisma.MonthlyReportUncheckedUpdateManyWithoutBranchNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchCreateWithoutReportsInput = {
@@ -364,6 +389,7 @@ export type BranchCreateWithoutReportsInput = {
   name: string
   slug: string
   users?: Prisma.UserCreateNestedManyWithoutBranchInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutBranchInput
 }
 
 export type BranchUncheckedCreateWithoutReportsInput = {
@@ -371,6 +397,7 @@ export type BranchUncheckedCreateWithoutReportsInput = {
   name: string
   slug: string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutBranchInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutBranchInput
 }
 
 export type BranchCreateOrConnectWithoutReportsInput = {
@@ -394,6 +421,7 @@ export type BranchUpdateWithoutReportsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   users?: Prisma.UserUpdateManyWithoutBranchNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutReportsInput = {
@@ -401,6 +429,55 @@ export type BranchUncheckedUpdateWithoutReportsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   users?: Prisma.UserUncheckedUpdateManyWithoutBranchNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutUploadsInput = {
+  id?: string
+  name: string
+  slug: string
+  users?: Prisma.UserCreateNestedManyWithoutBranchInput
+  reports?: Prisma.MonthlyReportCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutUploadsInput = {
+  id?: string
+  name: string
+  slug: string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutBranchInput
+  reports?: Prisma.MonthlyReportUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutUploadsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutUploadsInput, Prisma.BranchUncheckedCreateWithoutUploadsInput>
+}
+
+export type BranchUpsertWithoutUploadsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutUploadsInput, Prisma.BranchUncheckedUpdateWithoutUploadsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutUploadsInput, Prisma.BranchUncheckedCreateWithoutUploadsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutUploadsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutUploadsInput, Prisma.BranchUncheckedUpdateWithoutUploadsInput>
+}
+
+export type BranchUpdateWithoutUploadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  users?: Prisma.UserUpdateManyWithoutBranchNestedInput
+  reports?: Prisma.MonthlyReportUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutUploadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutBranchNestedInput
+  reports?: Prisma.MonthlyReportUncheckedUpdateManyWithoutBranchNestedInput
 }
 
 
@@ -411,11 +488,13 @@ export type BranchUncheckedUpdateWithoutReportsInput = {
 export type BranchCountOutputType = {
   users: number
   reports: number
+  uploads: number
 }
 
 export type BranchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | BranchCountOutputTypeCountUsersArgs
   reports?: boolean | BranchCountOutputTypeCountReportsArgs
+  uploads?: boolean | BranchCountOutputTypeCountUploadsArgs
 }
 
 /**
@@ -442,6 +521,13 @@ export type BranchCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.MonthlyReportWhereInput
 }
 
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountUploadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UploadWhereInput
+}
+
 
 export type BranchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -449,6 +535,7 @@ export type BranchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   slug?: boolean
   users?: boolean | Prisma.Branch$usersArgs<ExtArgs>
   reports?: boolean | Prisma.Branch$reportsArgs<ExtArgs>
+  uploads?: boolean | Prisma.Branch$uploadsArgs<ExtArgs>
   _count?: boolean | Prisma.BranchCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["branch"]>
 
@@ -474,6 +561,7 @@ export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type BranchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Branch$usersArgs<ExtArgs>
   reports?: boolean | Prisma.Branch$reportsArgs<ExtArgs>
+  uploads?: boolean | Prisma.Branch$uploadsArgs<ExtArgs>
   _count?: boolean | Prisma.BranchCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BranchIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -484,6 +572,7 @@ export type $BranchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     users: Prisma.$UserPayload<ExtArgs>[]
     reports: Prisma.$MonthlyReportPayload<ExtArgs>[]
+    uploads: Prisma.$UploadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -885,6 +974,7 @@ export interface Prisma__BranchClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   users<T extends Prisma.Branch$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reports<T extends Prisma.Branch$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MonthlyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  uploads<T extends Prisma.Branch$uploadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$uploadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1355,6 +1445,30 @@ export type Branch$reportsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.MonthlyReportScalarFieldEnum | Prisma.MonthlyReportScalarFieldEnum[]
+}
+
+/**
+ * Branch.uploads
+ */
+export type Branch$uploadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Upload
+   */
+  select?: Prisma.UploadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Upload
+   */
+  omit?: Prisma.UploadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UploadInclude<ExtArgs> | null
+  where?: Prisma.UploadWhereInput
+  orderBy?: Prisma.UploadOrderByWithRelationInput | Prisma.UploadOrderByWithRelationInput[]
+  cursor?: Prisma.UploadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UploadScalarFieldEnum | Prisma.UploadScalarFieldEnum[]
 }
 
 /**

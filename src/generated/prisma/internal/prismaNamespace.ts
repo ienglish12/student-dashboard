@@ -387,6 +387,7 @@ export const ModelName = {
   User: 'User',
   Branch: 'Branch',
   MonthlyReport: 'MonthlyReport',
+  Upload: 'Upload',
   Nationality: 'Nationality',
   Course: 'Course',
   NationalityPreset: 'NationalityPreset',
@@ -406,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "branch" | "monthlyReport" | "nationality" | "course" | "nationalityPreset" | "coursePreset"
+    modelProps: "user" | "branch" | "monthlyReport" | "upload" | "nationality" | "course" | "nationalityPreset" | "coursePreset"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -629,6 +630,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.MonthlyReportCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.MonthlyReportCountAggregateOutputType> | number
+        }
+      }
+    }
+    Upload: {
+      payload: Prisma.$UploadPayload<ExtArgs>
+      fields: Prisma.UploadFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UploadFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UploadFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload>
+        }
+        findFirst: {
+          args: Prisma.UploadFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UploadFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload>
+        }
+        findMany: {
+          args: Prisma.UploadFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload>[]
+        }
+        create: {
+          args: Prisma.UploadCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload>
+        }
+        createMany: {
+          args: Prisma.UploadCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UploadCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload>[]
+        }
+        delete: {
+          args: Prisma.UploadDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload>
+        }
+        update: {
+          args: Prisma.UploadUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload>
+        }
+        deleteMany: {
+          args: Prisma.UploadDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UploadUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UploadUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload>[]
+        }
+        upsert: {
+          args: Prisma.UploadUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadPayload>
+        }
+        aggregate: {
+          args: Prisma.UploadAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUpload>
+        }
+        groupBy: {
+          args: Prisma.UploadGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UploadGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UploadCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UploadCountAggregateOutputType> | number
         }
       }
     }
@@ -1023,6 +1098,19 @@ export const MonthlyReportScalarFieldEnum = {
 export type MonthlyReportScalarFieldEnum = (typeof MonthlyReportScalarFieldEnum)[keyof typeof MonthlyReportScalarFieldEnum]
 
 
+export const UploadScalarFieldEnum = {
+  id: 'id',
+  branchId: 'branchId',
+  period: 'period',
+  filename: 'filename',
+  studentCount: 'studentCount',
+  content: 'content',
+  uploadedAt: 'uploadedAt'
+} as const
+
+export type UploadScalarFieldEnum = (typeof UploadScalarFieldEnum)[keyof typeof UploadScalarFieldEnum]
+
+
 export const NationalityScalarFieldEnum = {
   id: 'id',
   reportId: 'reportId',
@@ -1261,6 +1349,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   branch?: Prisma.BranchOmit
   monthlyReport?: Prisma.MonthlyReportOmit
+  upload?: Prisma.UploadOmit
   nationality?: Prisma.NationalityOmit
   course?: Prisma.CourseOmit
   nationalityPreset?: Prisma.NationalityPresetOmit
