@@ -77,6 +77,10 @@ model MonthlyReport {
   // Free-text notes from the branch employee
   notes String @default("")
 
+  // Extra analytics derived from the roster (JSON): consultants, packages,
+  // enrollments-by-day. Empty for manually-entered reports.
+  extras String @default("{}")
+
   nationalities Nationality[]
   courses       Course[]
   updatedAt     DateTime      @updatedAt

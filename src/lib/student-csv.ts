@@ -3,11 +3,18 @@
 
 import { type ReportNumbers, emptyNumbers } from "@/lib/fields";
 
+export type ReportExtras = {
+  consultants: Record<string, number>;
+  packages: { hours: number; levels: number; both: number; unknown: number };
+  byDay: Record<string, number>;
+};
+
 export type AggregatedRow = {
   period: string;
   numbers: ReportNumbers;
   nationalities: { name: string; count: number }[];
   courses: { name: string; type: string; count: number }[];
+  extras: ReportExtras;
 };
 
 /** Minimal RFC-4180-ish CSV parser (handles quotes and commas in fields). */
@@ -138,11 +145,20 @@ export function aggregateStudentCsv(text: string): {
     level: findCol(headers, "level", "المستوى", "مستوى"),
     delivery: findCol(headers, "home, on site", "on site", "online", "الحضور", "attendance"),
     renewal: findCol(headers, "renewal", "تجديد"),
+    consultant: findCol(headers, "educational consultant", "consultant", "مستشار", "موظف"),
+    pkg: findCol(headers, "hours/levels", "hours", "levels", "package", "باقة"),
   };
 
   const byPeriod = new Map<
     string,
-    { numbers: ReportNumbers; nats: Map<string, number>; courses: Map<string, { type: string; count: number }> }
+    {
+      numbers: ReportNumbers;
+      nats: Map<string, number>;
+      courses: Map<string, { type: string; count: number }>;
+      consultants: Map<string, number>;
+      packages: { hours: number; levels: number; both: number; unknown: number };
+      byDay: Map<string, number>;
+    }
   >();
 
   let totalStudents = 0;
@@ -167,6 +183,9 @@ export function aggregateStudentCsv(text: string): {
         numbers: emptyNumbers(),
         nats: new Map(),
         courses: new Map(),
+        consultants: new Map(),
+        packages: { hours: 0, levels: 0, both: 0, unknown: 0 },
+        byDay: new Map(),
       });
     }
     const acc = byPeriod.get(period)!;
@@ -217,6 +236,30 @@ export function aggregateStudentCsv(text: string): {
         });
       }
     }
+
+    // consultant (sales rep)
+    if (ci.consultant >= 0 && row[ci.consultant]?.trim()) {
+      const name = row[ci.consultant].trim();
+      acc.consultants.set(name, (acc.consultants.get(name) ?? 0) + 1);
+    }
+    // package type (Hours vs Levels)
+    if (ci.pkg >= 0) {
+      const v = norm(row[ci.pkg]);
+      const hasHr = /\bhr|hour/.test(v);
+      const hasLvl = /level/.test(v);
+      if (hasHr && hasLvl) acc.packages.both++;
+      else if (hasHr) acc.packages.hours++;
+      else if (hasLvl) acc.packages.levels++;
+      else acc.packages.unknown++;
+    }
+    // enrollment day-of-month
+    if (ci.date >= 0) {
+      const dm = (row[ci.date] || "").match(/(\d{1,2})/);
+      if (dm) {
+        const day = String(parseInt(dm[1], 10));
+        acc.byDay.set(day, (acc.byDay.get(day) ?? 0) + 1);
+      }
+    }
   }
 
   const rows: AggregatedRow[] = [...byPeriod.entries()].map(([period, a]) => ({
@@ -228,6 +271,11 @@ export function aggregateStudentCsv(text: string): {
       type: v.type,
       count: v.count,
     })),
+    extras: {
+      consultants: Object.fromEntries(a.consultants),
+      packages: a.packages,
+      byDay: Object.fromEntries(a.byDay),
+    },
   }));
 
   return { rows, totalStudents, skipped };

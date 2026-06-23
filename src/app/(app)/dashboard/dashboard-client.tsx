@@ -28,6 +28,9 @@ const NAVY = "#16243f";
 const BRAND = "#1d4ed8";
 const PINK = "#ec4899";
 
+const pctOf = (count: number, max: number) =>
+  max > 0 ? Math.round((count / max) * 100) : 0;
+
 export function DashboardClient({
   period,
   data,
@@ -223,6 +226,70 @@ export function DashboardClient({
                 </ResponsiveContainer>
               </div>
             </Card>
+
+            {/* Roster-derived analytics (consultants / packages / by-day) */}
+            {data.extras.hasExtras && (
+              <>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {data.extras.consultants.length > 0 && (
+                    <Card title={t("dash.consultants")}>
+                      <div className="space-y-3">
+                        {data.extras.consultants.slice(0, 8).map((c) => (
+                          <ProgressRow
+                            key={c.name}
+                            label={c.name}
+                            count={c.count}
+                            pct={pctOf(c.count, data.extras.consultants[0].count)}
+                          />
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+
+                  {data.extras.packages.hours +
+                    data.extras.packages.levels +
+                    data.extras.packages.both >
+                    0 && (
+                    <Card title={t("dash.packages")}>
+                      <div className="h-56">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={[
+                              { name: t("pkg.hours"), v: data.extras.packages.hours },
+                              { name: t("pkg.levels"), v: data.extras.packages.levels },
+                              { name: t("pkg.both"), v: data.extras.packages.both },
+                            ]}
+                            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f8" />
+                            <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#64748b" }} />
+                            <YAxis tick={{ fontSize: 11, fill: "#64748b" }} orientation="right" />
+                            <Tooltip cursor={{ fill: "#eff4ff" }} />
+                            <Bar dataKey="v" name={t("rep.student")} fill={BRAND} radius={[6, 6, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </Card>
+                  )}
+                </div>
+
+                {data.extras.byDay.length > 0 && (
+                  <Card title={t("dash.byDay")}>
+                    <div className="h-56">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={data.extras.byDay} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f8" />
+                          <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#64748b" }} />
+                          <YAxis tick={{ fontSize: 11, fill: "#64748b" }} orientation="right" />
+                          <Tooltip cursor={{ fill: "#eff4ff" }} />
+                          <Bar dataKey="count" name={t("rep.student")} fill={NAVY} radius={[6, 6, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </Card>
+                )}
+              </>
+            )}
 
             {/* Auto insights */}
             <div className="rounded-2xl bg-navy text-white p-6">

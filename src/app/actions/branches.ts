@@ -90,9 +90,13 @@ export async function importStudentSheet(
   }));
   const res = await applyImport(items as Parameters<typeof applyImport>[0]);
 
-  // Keep the raw file per (branch, period) so it can be reviewed/downloaded.
+  // Store derived extra analytics + keep the raw file per (branch, period).
   for (const r of rows) {
     const count = r.numbers.male + r.numbers.female;
+    await prisma.monthlyReport.update({
+      where: { branchId_period: { branchId, period: r.period } },
+      data: { extras: JSON.stringify(r.extras) },
+    });
     await prisma.upload.deleteMany({ where: { branchId, period: r.period } });
     await prisma.upload.create({
       data: { branchId, period: r.period, filename, studentCount: count, content: csv },

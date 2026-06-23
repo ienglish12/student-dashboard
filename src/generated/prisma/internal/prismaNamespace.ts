@@ -1092,6 +1092,7 @@ export const MonthlyReportScalarFieldEnum = {
   home: 'home',
   renewals: 'renewals',
   notes: 'notes',
+  extras: 'extras',
   updatedAt: 'updatedAt'
 } as const
 

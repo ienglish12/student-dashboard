@@ -14,6 +14,7 @@ export type ReportWithRelations = {
   branch: { id: string; name: string };
   nationalities: { name: string; count: number }[];
   courses: { name: string; type: string; count: number }[];
+  extras?: string;
 } & Record<NumericField, number>;
 
 export type BranchRef = { id: string; name: string };
@@ -121,6 +122,43 @@ export function aggregate(
   const totalRenewals = valid.reduce((a, r) => a + r.renewals, 0);
   const renewalRate = pct(totalRenewals, total);
 
+  // ---- Extra analytics merged from roster imports (consultants/packages/byDay) ----
+  const consultantMap = new Map<string, number>();
+  const packages = { hours: 0, levels: 0, both: 0, unknown: 0 };
+  const byDayMap = new Map<number, number>();
+  for (const r of valid) {
+    if (!r.extras) continue;
+    try {
+      const e = JSON.parse(r.extras) as {
+        consultants?: Record<string, number>;
+        packages?: { hours: number; levels: number; both: number; unknown: number };
+        byDay?: Record<string, number>;
+      };
+      for (const [name, c] of Object.entries(e.consultants ?? {}))
+        consultantMap.set(name, (consultantMap.get(name) ?? 0) + c);
+      if (e.packages) {
+        packages.hours += e.packages.hours || 0;
+        packages.levels += e.packages.levels || 0;
+        packages.both += e.packages.both || 0;
+        packages.unknown += e.packages.unknown || 0;
+      }
+      for (const [day, c] of Object.entries(e.byDay ?? {}))
+        byDayMap.set(+day, (byDayMap.get(+day) ?? 0) + c);
+    } catch {
+      /* ignore malformed extras */
+    }
+  }
+  const consultants = [...consultantMap.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+  const byDay = [...byDayMap.entries()]
+    .map(([day, count]) => ({ day, count }))
+    .sort((a, b) => a.day - b.day);
+  const hasExtras =
+    consultants.length > 0 ||
+    byDay.length > 0 ||
+    packages.hours + packages.levels + packages.both > 0;
+
   // ---- Auto insights (SPEC §5) ----
   const highest = byBranch[0] ?? null;
   const lowest = byBranch.length ? byBranch[byBranch.length - 1] : null;
@@ -150,6 +188,7 @@ export function aggregate(
     ageGroups,
     levels,
     deliveryOverall,
+    extras: { consultants, packages, byDay, hasExtras },
     insights: {
       highest,
       lowest,
