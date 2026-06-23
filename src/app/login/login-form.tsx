@@ -46,7 +46,7 @@ export function LoginForm() {
 
       <div className="flex items-center justify-between mb-1.5">
         <label className="text-sm font-bold text-ink">{t("password")}</label>
-        <a className="text-sm text-brand font-bold" href="#">
+        <a className="text-sm text-brand font-bold" href="/forgot">
           {t("login.forgot")}
         </a>
       </div>

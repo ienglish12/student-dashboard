@@ -1152,10 +1152,6 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
 export type MonthlyReportCreateNestedOneWithoutNationalitiesInput = {
   create?: Prisma.XOR<Prisma.MonthlyReportCreateWithoutNationalitiesInput, Prisma.MonthlyReportUncheckedCreateWithoutNationalitiesInput>
   connectOrCreate?: Prisma.MonthlyReportCreateOrConnectWithoutNationalitiesInput

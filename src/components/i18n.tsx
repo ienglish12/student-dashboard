@@ -13,7 +13,34 @@ export const T: Dict = {
   "nav.analysis": { ar: "تحليل البيانات", en: "Analytics" },
   "nav.compare": { ar: "المقارنة", en: "Compare" },
   "nav.reports": { ar: "المتابعة", en: "Reports" },
+  "nav.import": { ar: "رفع الملفات", en: "Upload" },
   "nav.settings": { ar: "الإعدادات", en: "Settings" },
+
+  // import page
+  "imp.title": { ar: "رفع كشف الطلاب", en: "Upload student roster" },
+  "imp.subtitle": {
+    ar: "اختر الفرع وارفع ملف CSV — السستم يحلّله ويجمّعه تلقائياً حسب الشهر.",
+    en: "Pick a branch and upload a CSV — auto-analyzed and aggregated by month.",
+  },
+  "imp.branch": { ar: "الفرع", en: "Branch" },
+  "imp.choose": { ar: "اضغط لاختيار ملف CSV", en: "Click to choose a CSV file" },
+  "imp.pickFirst": { ar: "اختر الفرع أولاً قبل رفع الملف.", en: "Pick a branch first." },
+  "imp.noData": { ar: "لم يتم العثور على بيانات صالحة في الملف.", en: "No valid data found in the file." },
+  "imp.failed": { ar: "تعذّر استيراد الملف.", en: "Could not import the file." },
+  "imp.skipped": { ar: "صف متخطّى", en: "rows skipped" },
+  "imp.howTitle": { ar: "إزاي يشتغل؟", en: "How it works" },
+  "imp.how1": {
+    ar: "١. الموظفين يكمّلوا كشوفاتهم (صف لكل طالب) في Google Sheets عادي.",
+    en: "1. Staff fill their rosters (one row per student) in Google Sheets.",
+  },
+  "imp.how2": {
+    ar: "٢. صدّر الكشف: File → Download → CSV.",
+    en: "2. Export: File → Download → CSV.",
+  },
+  "imp.how3": {
+    ar: "٣. اختر الفرع وارفع الملف هنا — تظهر النتائج في تحليل البيانات.",
+    en: "3. Pick the branch and upload — results show in Analytics.",
+  },
 
   // compare
   "cmp.title": { ar: "مقارنة الفترات", en: "Compare periods" },
@@ -64,6 +91,23 @@ export const T: Dict = {
   },
   "login.email": { ar: "البريد الإلكتروني", en: "Email" },
   "login.forgot": { ar: "نسيت كلمة المرور؟", en: "Forgot password?" },
+  "fp.title": { ar: "استعادة كلمة المرور", en: "Reset password" },
+  "fp.subtitle": {
+    ar: "اكتب بريدك، وهيوصل طلب للمسؤول لإعادة تعيين كلمة المرور.",
+    en: "Enter your email; the admin will be notified to reset it.",
+  },
+  "fp.submit": { ar: "إرسال الطلب", en: "Send request" },
+  "fp.sent": {
+    ar: "تم إرسال طلبك ✓ — تواصل مع المسؤول لاستلام كلمة المرور الجديدة.",
+    en: "Request sent ✓ — contact the admin for your new password.",
+  },
+  "fp.back": { ar: "العودة لتسجيل الدخول", en: "Back to sign in" },
+  // reset requests (admin)
+  "set.resetRequests": { ar: "طلبات استعادة كلمة المرور", en: "Password reset requests" },
+  "set.noRequests": { ar: "لا توجد طلبات.", en: "No requests." },
+  "set.setPassword": { ar: "كلمة مرور جديدة", en: "New password" },
+  "set.apply": { ar: "تعيين", en: "Set" },
+  "set.dismiss": { ar: "تجاهل", en: "Dismiss" },
   "login.remember": { ar: "تذكرني على هذا الجهاز", en: "Remember me" },
   "login.submit": { ar: "تسجيل الدخول", en: "Sign in" },
   "login.submitting": { ar: "جارٍ الدخول…", en: "Signing in…" },

@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  PasswordResetRequest: 'PasswordResetRequest',
   Branch: 'Branch',
   MonthlyReport: 'MonthlyReport',
   Upload: 'Upload',
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "branch" | "monthlyReport" | "upload" | "nationality" | "course" | "nationalityPreset" | "coursePreset"
+    modelProps: "user" | "passwordResetRequest" | "branch" | "monthlyReport" | "upload" | "nationality" | "course" | "nationalityPreset" | "coursePreset"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -482,6 +483,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    PasswordResetRequest: {
+      payload: Prisma.$PasswordResetRequestPayload<ExtArgs>
+      fields: Prisma.PasswordResetRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PasswordResetRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PasswordResetRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.PasswordResetRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PasswordResetRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload>
+        }
+        findMany: {
+          args: Prisma.PasswordResetRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload>[]
+        }
+        create: {
+          args: Prisma.PasswordResetRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload>
+        }
+        createMany: {
+          args: Prisma.PasswordResetRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PasswordResetRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.PasswordResetRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload>
+        }
+        update: {
+          args: Prisma.PasswordResetRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.PasswordResetRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PasswordResetRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PasswordResetRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.PasswordResetRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.PasswordResetRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePasswordResetRequest>
+        }
+        groupBy: {
+          args: Prisma.PasswordResetRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PasswordResetRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetRequestCountAggregateOutputType> | number
         }
       }
     }
@@ -1053,6 +1128,16 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const PasswordResetRequestScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  createdAt: 'createdAt',
+  resolved: 'resolved'
+} as const
+
+export type PasswordResetRequestScalarFieldEnum = (typeof PasswordResetRequestScalarFieldEnum)[keyof typeof PasswordResetRequestScalarFieldEnum]
+
+
 export const BranchScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1197,20 +1282,6 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -1221,6 +1292,27 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -1348,6 +1440,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  passwordResetRequest?: Prisma.PasswordResetRequestOmit
   branch?: Prisma.BranchOmit
   monthlyReport?: Prisma.MonthlyReportOmit
   upload?: Prisma.UploadOmit

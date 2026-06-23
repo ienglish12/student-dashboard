@@ -22,6 +22,14 @@ model User {
   branch       Branch? @relation(fields: [branchId], references: [id])
 }
 
+// A user-initiated password reset request; the admin fulfills it.
+model PasswordResetRequest {
+  id        String   @id @default(cuid())
+  email     String
+  createdAt DateTime @default(now())
+  resolved  Boolean  @default(false)
+}
+
 model Branch {
   id      String          @id @default(cuid())
   name    String

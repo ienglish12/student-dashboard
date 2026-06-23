@@ -11,6 +11,7 @@ import {
   IconLogout,
   IconClipboard,
   IconCompare,
+  IconUpload,
 } from "@/components/icons";
 import type { Role } from "@/lib/enums";
 
@@ -33,6 +34,7 @@ export function TopNav({
           { href: "/dashboard", label: t("nav.analysis"), icon: <IconDashboard width={18} height={18} /> },
           { href: "/compare", label: t("nav.compare"), icon: <IconCompare width={18} height={18} /> },
           { href: "/reports", label: t("nav.reports"), icon: <IconClipboard width={18} height={18} /> },
+          { href: "/import", label: t("nav.import"), icon: <IconUpload width={18} height={18} /> },
           { href: "/settings", label: t("nav.settings"), icon: <IconSettings width={18} height={18} /> },
         ]
       : [];

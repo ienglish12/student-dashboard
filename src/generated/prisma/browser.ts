@@ -23,6 +23,11 @@ export * from './enums';
  */
 export type User = Prisma.UserModel
 /**
+ * Model PasswordResetRequest
+ * 
+ */
+export type PasswordResetRequest = Prisma.PasswordResetRequestModel
+/**
  * Model Branch
  * 
  */
