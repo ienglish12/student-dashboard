@@ -118,6 +118,39 @@ export function aggregate(
     return { key: f.key, label: f.label, count: c, pct: pct(c, total) };
   });
 
+  // ---- Class types overall (%) ----
+  const classSumAll = valid.reduce(
+    (a, r) => a + sum(r, CLASS_FIELDS.map((f) => f.key)),
+    0,
+  );
+  const classOverall = CLASS_FIELDS.map((f) => {
+    const c = valid.reduce((a, r) => a + r[f.key], 0);
+    return { key: f.key, count: c, pct: pct(c, classSumAll) };
+  });
+
+  // ---- Courses overall (top by name + type split) ----
+  const courseMap = new Map<string, { type: string; count: number }>();
+  for (const r of valid) {
+    for (const c of r.courses) {
+      if (c.count <= 0) continue;
+      const e = courseMap.get(c.name);
+      courseMap.set(c.name, {
+        type: c.type,
+        count: (e?.count ?? 0) + c.count,
+      });
+    }
+  }
+  const courseSumAll = [...courseMap.values()].reduce((a, c) => a + c.count, 0);
+  const topCourses = [...courseMap.entries()]
+    .map(([name, v]) => ({ name, type: v.type, count: v.count, pct: pct(v.count, courseSumAll) }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8);
+  const courseTypeSplit = {
+    general: [...courseMap.values()].filter((c) => c.type === "GENERAL_ENGLISH").reduce((a, c) => a + c.count, 0),
+    testPrep: [...courseMap.values()].filter((c) => c.type === "TEST_PREP").reduce((a, c) => a + c.count, 0),
+    other: [...courseMap.values()].filter((c) => c.type === "OTHER").reduce((a, c) => a + c.count, 0),
+  };
+
   // ---- Renewals overall ----
   const totalRenewals = valid.reduce((a, r) => a + r.renewals, 0);
   const renewalRate = pct(totalRenewals, total);
@@ -188,6 +221,9 @@ export function aggregate(
     ageGroups,
     levels,
     deliveryOverall,
+    classOverall,
+    topCourses,
+    courseTypeSplit,
     extras: { consultants, packages, byDay, hasExtras },
     insights: {
       highest,

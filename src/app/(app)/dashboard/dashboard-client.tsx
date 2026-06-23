@@ -31,6 +31,18 @@ const PINK = "#ec4899";
 const pctOf = (count: number, max: number) =>
   max > 0 ? Math.round((count / max) * 100) : 0;
 
+const CLASS_LABEL: Record<string, string> = {
+  classGroupAdult: "f.groupAdult",
+  classVipAdult: "f.vipAdult",
+  classVipKid: "f.vipKid",
+  classOther: "f.classOther",
+};
+const DELIVERY_LABEL: Record<string, string> = {
+  onsite: "f.onsite",
+  online: "f.online",
+  home: "f.home",
+};
+
 export function DashboardClient({
   period,
   data,
@@ -226,6 +238,44 @@ export function DashboardClient({
                 </ResponsiveContainer>
               </div>
             </Card>
+
+            {/* Class type · Courses · Delivery */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card title={t("sec.classType")}>
+                <div className="space-y-3">
+                  {data.classOverall.filter((c) => c.count > 0).length === 0 && (
+                    <p className="text-ink-soft text-sm">—</p>
+                  )}
+                  {data.classOverall
+                    .filter((c) => c.count > 0)
+                    .map((c) => (
+                      <ProgressRow key={c.key} label={t(CLASS_LABEL[c.key] ?? c.key)} pct={c.pct} count={c.count} />
+                    ))}
+                </div>
+              </Card>
+
+              <Card title={t("sec.courses")}>
+                <div className="space-y-3">
+                  {data.topCourses.length === 0 && <p className="text-ink-soft text-sm">—</p>}
+                  {data.topCourses.map((c) => (
+                    <ProgressRow key={c.name} label={c.name} pct={c.pct} count={c.count} />
+                  ))}
+                </div>
+              </Card>
+
+              <Card title={t("sec.delivery")}>
+                <div className="space-y-3">
+                  {data.deliveryOverall.filter((d) => d.count > 0).length === 0 && (
+                    <p className="text-ink-soft text-sm">—</p>
+                  )}
+                  {data.deliveryOverall
+                    .filter((d) => d.count > 0)
+                    .map((d) => (
+                      <ProgressRow key={d.key} label={t(DELIVERY_LABEL[d.key] ?? d.key)} pct={d.pct} count={d.count} />
+                    ))}
+                </div>
+              </Card>
+            </div>
 
             {/* Roster-derived analytics (consultants / packages / by-day) */}
             {data.extras.hasExtras && (
