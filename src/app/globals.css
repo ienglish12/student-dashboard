@@ -39,17 +39,17 @@
 }
 
 .dark {
-  --canvas: #0d1320;
-  --ink: #e8edf6;
-  --ink-soft: #94a3b8;
-  --navy: #16243f;
-  --navy-700: #243a63;
-  --brand: #3b82f6;
-  --brand-600: #2563eb;
-  --brand-50: #18233b;
-  --danger-50: #2a1518;
-  --line: #232f44;
-  --card: #151d2c;
+  --canvas: #0b111d;
+  --ink: #f1f5fb;
+  --ink-soft: #a7b4ca;
+  --navy: #294a82;
+  --navy-700: #335aa0;
+  --brand: #4d8bf0;
+  --brand-600: #3b82f6;
+  --brand-50: #1e2d4d;
+  --danger-50: #2c1619;
+  --line: #2c3a54;
+  --card: #161f31;
   color-scheme: dark;
 }
 

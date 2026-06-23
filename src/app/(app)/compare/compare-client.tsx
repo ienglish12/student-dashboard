@@ -177,8 +177,8 @@ export function CompareClient({
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={overviewData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} />
-                  <YAxis tick={{ fontSize: 11, fill: "var(--ink-soft)" }} />
+                  <XAxis dataKey="name" tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
+                  <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
                   <Tooltip cursor={{ fill: "var(--brand-50)" }} />
                   <Legend />
                   <Bar dataKey={labelA} fill={BRAND} radius={[6, 6, 0, 0]} />
@@ -193,8 +193,8 @@ export function CompareClient({
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={ageData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} />
-                  <YAxis tick={{ fontSize: 11, fill: "var(--ink-soft)" }} />
+                  <XAxis dataKey="name" tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
+                  <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
                   <Tooltip cursor={{ fill: "var(--brand-50)" }} />
                   <Legend />
                   <Bar dataKey={labelA} fill={BRAND} radius={[6, 6, 0, 0]} />

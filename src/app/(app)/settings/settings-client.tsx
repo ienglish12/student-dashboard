@@ -177,9 +177,9 @@ export function SettingsClient({
           </section>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="flex flex-col gap-6">
           {/* Branches */}
-          <section className="card p-6">
+          <section className="card p-6 order-2">
             <div className="flex items-center gap-2 mb-5">
               <IconStore className="text-brand" />
               <h2 className="font-extrabold text-ink">{t("set.branches")}</h2>
@@ -196,7 +196,7 @@ export function SettingsClient({
                 <IconPlus width={16} height={16} /> {t("set.addBranch")}
               </button>
             </div>
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
               {branches.map((b) => (
                 <div key={b.id} className="flex items-center gap-3 rounded-xl border border-line p-3">
                   <span className="size-10 rounded-full bg-brand-50 grid place-items-center text-brand shrink-0">
@@ -242,7 +242,7 @@ export function SettingsClient({
           </section>
 
           {/* Users */}
-          <section className="card p-6">
+          <section className="card p-6 order-1">
             <div className="flex items-center gap-2 mb-1">
               <IconUsers className="text-brand" />
               <h2 className="font-extrabold text-ink">{t("set.users")}</h2>

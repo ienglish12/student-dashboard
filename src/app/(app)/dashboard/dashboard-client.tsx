@@ -191,10 +191,10 @@ export function DashboardClient({
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={byBranch} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f8" />
-                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#64748b" }} reversed />
-                      <YAxis tick={{ fontSize: 11, fill: "#64748b" }} orientation="right" />
-                      <Tooltip cursor={{ fill: "#eff4ff" }} />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
+                      <XAxis dataKey="name" tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} reversed />
+                      <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} orientation="right" width={44} />
+                      <Tooltip cursor={{ fill: "var(--brand-50)" }} />
                       <Bar dataKey="total" name={t("kpi.total")} fill={BRAND} radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -229,10 +229,10 @@ export function DashboardClient({
               <div className="h-56">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={levels} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f8" />
-                    <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#64748b" }} reversed />
-                    <YAxis tick={{ fontSize: 11, fill: "#64748b" }} orientation="right" />
-                    <Tooltip cursor={{ fill: "#eff4ff" }} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
+                    <XAxis dataKey="label" tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} reversed />
+                    <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} orientation="right" width={44} />
+                    <Tooltip cursor={{ fill: "var(--brand-50)" }} />
                     <Bar dataKey="count" name={t("kpi.total")} fill={NAVY} radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -328,10 +328,10 @@ export function DashboardClient({
                             ]}
                             margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                           >
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f8" />
-                            <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#64748b" }} />
-                            <YAxis tick={{ fontSize: 11, fill: "#64748b" }} orientation="right" />
-                            <Tooltip cursor={{ fill: "#eff4ff" }} />
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
+                            <XAxis dataKey="name" tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
+                            <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} orientation="right" width={44} />
+                            <Tooltip cursor={{ fill: "var(--brand-50)" }} />
                             <Bar dataKey="v" name={t("rep.student")} fill={BRAND} radius={[6, 6, 0, 0]} />
                           </BarChart>
                         </ResponsiveContainer>
@@ -345,10 +345,10 @@ export function DashboardClient({
                     <div className="h-56">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={data.extras.byDay} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f8" />
-                          <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#64748b" }} />
-                          <YAxis tick={{ fontSize: 11, fill: "#64748b" }} orientation="right" />
-                          <Tooltip cursor={{ fill: "#eff4ff" }} />
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
+                          <XAxis dataKey="day" tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
+                          <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} orientation="right" width={44} />
+                          <Tooltip cursor={{ fill: "var(--brand-50)" }} />
                           <Bar dataKey="count" name={t("rep.student")} fill={NAVY} radius={[6, 6, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>

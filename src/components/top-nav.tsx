@@ -65,7 +65,7 @@ export function TopNav({
                 href={item.href}
                 className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition ${
                   active
-                    ? "bg-brand-50 text-brand"
+                    ? "bg-brand text-white"
                     : "text-ink-soft hover:bg-canvas hover:text-ink"
                 }`}
               >
