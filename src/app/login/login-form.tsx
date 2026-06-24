@@ -1,7 +1,11 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { loginAction, type LoginState } from "@/app/actions/auth";
+import {
+  loginAction,
+  verifyTwoFactorAction,
+  type LoginState,
+} from "@/app/actions/auth";
 import { useT } from "@/components/i18n";
 
 export function LoginForm() {
@@ -9,8 +13,53 @@ export function LoginForm() {
     loginAction,
     {},
   );
+  const [twoState, twoAction, twoPending] = useActionState<LoginState, FormData>(
+    verifyTwoFactorAction,
+    {},
+  );
   const [showPass, setShowPass] = useState(false);
   const { t } = useT();
+
+  const inTwoFA = Boolean(state.twofa || twoState.twofa);
+
+  if (inTwoFA) {
+    return (
+      <form action={twoAction} className="card w-full max-w-md p-8">
+        <h2 className="text-2xl font-extrabold text-ink mb-1">{t("login.2faTitle")}</h2>
+        <p className="text-ink-soft text-sm mb-6">{t("login.2faSub")}</p>
+
+        {twoState.error && (
+          <div className="mb-4 rounded-xl bg-danger-50 border border-danger/30 px-4 py-2.5 text-danger text-sm">
+            {twoState.error}
+          </div>
+        )}
+
+        <label className="block text-sm font-bold text-ink mb-1.5">{t("login.2faCode")}</label>
+        <input
+          name="code"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          required
+          placeholder="------"
+          dir="ltr"
+          className="field text-center tracking-[0.5em] text-lg mb-4"
+          autoFocus
+        />
+
+        <button type="submit" disabled={twoPending} className="btn-primary w-full">
+          {twoPending ? t("login.submitting") : t("login.2faVerify")}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="mt-3 w-full text-sm text-ink-soft font-bold hover:text-ink"
+        >
+          {t("login.2faBack")}
+        </button>
+      </form>
+    );
+  }
 
   return (
     <form action={formAction} className="card w-full max-w-md p-8">

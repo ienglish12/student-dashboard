@@ -6,6 +6,14 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { isRole } from "@/lib/enums";
 import { validatePassword } from "@/lib/password";
+import { emailEnabled, sendEmail, codeEmailHtml } from "@/lib/email";
+import {
+  generateCode,
+  hashCode,
+  setResetChallenge,
+  readResetChallenge,
+  clearResetChallenge,
+} from "@/lib/otp";
 
 async function requireAdmin() {
   const session = await getSession();
@@ -55,19 +63,67 @@ export async function resetUserPassword(id: string, password: string) {
   return { ok: true };
 }
 
-/** Public: a user requests a password reset (admin fulfills it). */
-export async function requestPasswordReset(email: string) {
+/**
+ * Public: start a password reset.
+ * - Admin (with email configured): emails a verification code → "code" flow.
+ * - Everyone else: records a request the admin fulfills → "manual" flow.
+ * Never reveals whether an account exists.
+ */
+export async function startPasswordReset(
+  email: string,
+): Promise<{ ok: boolean; mode: "code" | "manual"; error?: string }> {
   const clean = email.trim().toLowerCase();
   if (!clean || !clean.includes("@")) {
-    return { ok: false as const, error: "بريد إلكتروني غير صحيح" };
+    return { ok: false, mode: "manual", error: "بريد إلكتروني غير صحيح" };
   }
-  // Only record a request if the account exists (silently succeed either way).
+
   const user = await prisma.user.findUnique({ where: { email: clean } });
+
+  // Self-service code reset is reserved for admins (the only mailbox the
+  // owner controls in the current setup).
+  if (user && user.role === "ADMIN" && emailEnabled()) {
+    try {
+      const code = generateCode();
+      await sendEmail(
+        clean,
+        "إعادة تعيين كلمة المرور — iEnglish",
+        codeEmailHtml(code, "reset"),
+      );
+      await setResetChallenge(clean, code);
+      return { ok: true, mode: "code" };
+    } catch {
+      // fall through to the manual path
+    }
+  }
+
+  // Staff (or email unavailable): admin fulfills the request manually.
   if (user) {
     await prisma.passwordResetRequest.create({ data: { email: clean } });
+    revalidatePath("/settings");
   }
-  revalidatePath("/settings");
-  return { ok: true as const };
+  return { ok: true, mode: "manual" };
+}
+
+/** Public: complete the admin code reset by verifying the emailed code. */
+export async function completePasswordReset(
+  code: string,
+  newPassword: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const ch = await readResetChallenge();
+  if (!ch) return { ok: false, error: "انتهت صلاحية الرمز. اطلب رمزاً جديداً." };
+  if (!code || hashCode(code.trim(), ch.email) !== ch.codeHash) {
+    return { ok: false, error: "الرمز غير صحيح." };
+  }
+  const pwErr = validatePassword(newPassword);
+  if (pwErr) return { ok: false, error: pwErr };
+
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({
+    where: { email: ch.email },
+    data: { passwordHash },
+  });
+  await clearResetChallenge();
+  return { ok: true };
 }
 
 /** Admin: set a new password for the request's user and mark it resolved. */

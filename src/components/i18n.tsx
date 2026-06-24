@@ -112,6 +112,25 @@ export const T: Dict = {
     en: "Request sent ✓ — contact the admin for your new password.",
   },
   "fp.back": { ar: "العودة لتسجيل الدخول", en: "Back to sign in" },
+  "fp.codeSent": {
+    ar: "بعتنا كود تأكيد على بريدك. أدخله مع كلمة المرور الجديدة.",
+    en: "We sent a verification code to your email. Enter it with your new password.",
+  },
+  "fp.code": { ar: "كود التأكيد", en: "Verification code" },
+  "fp.newPassword": { ar: "كلمة المرور الجديدة", en: "New password" },
+  "fp.setPassword": { ar: "تعيين كلمة المرور", en: "Set password" },
+  "fp.resetDone": {
+    ar: "✓ تم تغيير كلمة المرور. تقدر تسجّل الدخول دلوقتي.",
+    en: "✓ Password changed. You can sign in now.",
+  },
+  "login.2faTitle": { ar: "تأكيد تسجيل الدخول", en: "Verify sign-in" },
+  "login.2faSub": {
+    ar: "بعتنا كود تأكيد على بريدك المسجّل. أدخله للمتابعة.",
+    en: "We sent a verification code to your email. Enter it to continue.",
+  },
+  "login.2faCode": { ar: "كود التأكيد", en: "Verification code" },
+  "login.2faVerify": { ar: "تأكيد ودخول", en: "Verify & sign in" },
+  "login.2faBack": { ar: "رجوع", en: "Back" },
   // reset requests (admin)
   "set.resetRequests": { ar: "طلبات استعادة كلمة المرور", en: "Password reset requests" },
   "set.noRequests": { ar: "لا توجد طلبات.", en: "No requests." },

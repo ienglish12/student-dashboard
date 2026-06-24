@@ -43,24 +43,27 @@ export async function getSession(): Promise<SessionPayload | null> {
   }
 }
 
-/** Verify credentials, set the session cookie. Returns the session or null. */
-export async function login(
+/** Check email + password. Returns the user identity (no cookie set) or null. */
+export async function verifyCredentials(
   email: string,
   password: string,
-  remember = false,
-): Promise<SessionPayload | null> {
+): Promise<{ userId: string; role: Role; branchId: string | null; email: string } | null> {
   const user = await prisma.user.findUnique({
     where: { email: email.trim().toLowerCase() },
   });
   if (!user) return null;
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) return null;
-
-  const payload: SessionPayload = {
+  return {
     userId: user.id,
     role: user.role as Role,
     branchId: user.branchId,
+    email: user.email,
   };
+}
+
+/** Set the session cookie for an already-verified identity. */
+export async function createSession(payload: SessionPayload, remember = false) {
   const token = await encrypt(payload, remember);
   (await cookies()).set(COOKIE_NAME, token, {
     httpOnly: true,
@@ -69,7 +72,6 @@ export async function login(
     path: "/",
     maxAge: remember ? MAX_AGE : undefined,
   });
-  return payload;
 }
 
 export async function logout() {
