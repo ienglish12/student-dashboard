@@ -12,7 +12,7 @@ export default async function LoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-b from-brand-50 to-canvas">
       <LoginToggles />
       {/* Logo + brand */}
-      <div className="flex flex-col items-center gap-3 mb-8">
+      <div className="flex flex-col items-center gap-3 mb-8 mt-10">
         <BrandLogo size="login" />
         <LoginTagline />
       </div>

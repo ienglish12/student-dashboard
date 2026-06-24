@@ -5,7 +5,7 @@ type BrandLogoProps = {
 };
 
 const sizes = {
-  login: "h-36 w-36 sm:h-44 sm:w-44",
+  login: "h-48 w-48 sm:h-60 sm:w-60",
   nav: "h-11 w-11",
 };
 
