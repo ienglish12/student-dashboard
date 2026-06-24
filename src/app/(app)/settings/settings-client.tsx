@@ -106,7 +106,6 @@ export function SettingsClient({
   // users
   const [uEmail, setUEmail] = useState("");
   const [uPass, setUPass] = useState("");
-  const [uRole, setURole] = useState("BRANCH");
   const [uBranch, setUBranch] = useState("");
   const [uMsg, setUMsg] = useState<string | null>(null);
 
@@ -117,8 +116,8 @@ export function SettingsClient({
         await createUser({
           email: uEmail,
           password: uPass,
-          role: uRole,
-          branchId: uRole === "BRANCH" ? uBranch || branches[0]?.id : null,
+          role: "BRANCH",
+          branchId: uBranch || branches[0]?.id,
         });
         setUEmail("");
         setUPass("");
@@ -340,29 +339,21 @@ export function SettingsClient({
                 dir="ltr"
                 className="field text-left w-full"
               />
-              <div className="flex gap-2">
-                <input
-                  value={uPass}
-                  onChange={(e) => setUPass(e.target.value)}
-                  placeholder={t("password")}
-                  dir="ltr"
-                  className="field text-left flex-1"
-                />
-                <select value={uRole} onChange={(e) => setURole(e.target.value)} className="field w-32">
-                  <option value="BRANCH">{t("set.roleBranch")}</option>
-                  <option value="ADMIN">{t("set.roleAdmin")}</option>
-                </select>
-              </div>
-              {uRole === "BRANCH" && (
-                <select value={uBranch} onChange={(e) => setUBranch(e.target.value)} className="field w-full">
-                  <option value="">{t("set.chooseBranch")}</option>
-                  {branches.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
-              )}
+              <input
+                value={uPass}
+                onChange={(e) => setUPass(e.target.value)}
+                placeholder={t("password")}
+                dir="ltr"
+                className="field text-left w-full"
+              />
+              <select value={uBranch} onChange={(e) => setUBranch(e.target.value)} className="field w-full">
+                <option value="">{t("set.chooseBranch")}</option>
+                {branches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex items-center gap-3 mb-4">
               <button onClick={addUser} disabled={pending} className="btn-primary">

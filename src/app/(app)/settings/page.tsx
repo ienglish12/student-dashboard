@@ -36,12 +36,14 @@ export default async function SettingsPage() {
         reports: b._count.reports,
         users: b._count.users,
       }))}
-      users={users.map((u) => ({
-        id: u.id,
-        email: u.email,
-        role: u.role,
-        branchName: u.branch ? branchDisplayName(u.branch) : null,
-      }))}
+      users={users
+        .filter((u) => u.role !== "ADMIN")
+        .map((u) => ({
+          id: u.id,
+          email: u.email,
+          role: u.role,
+          branchName: u.branch ? branchDisplayName(u.branch) : null,
+        }))}
       resetRequests={resetRequests.map((r) => ({
         id: r.id,
         email: r.email,
