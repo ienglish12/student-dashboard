@@ -68,13 +68,12 @@ export async function importReports(items: ImportItem[]) {
   return res;
 }
 
-/** Import a per-student roster CSV for one branch (auto-aggregates by month). */
-export async function importStudentSheet(
+/** Core: import a per-student roster CSV for one branch (auto-aggregates by month). */
+async function runStudentImport(
   branchId: string,
   csv: string,
   filename = "roster.csv",
 ) {
-  await requireAdmin();
   if (!branchId) throw new Error("اختر الفرع أولاً");
   const { aggregateStudentCsv } = await import("@/lib/student-csv");
   const { rows, totalStudents, skipped } = aggregateStudentCsv(csv);
@@ -106,6 +105,7 @@ export async function importStudentSheet(
   revalidatePath("/dashboard");
   revalidatePath("/reports");
   revalidatePath("/settings");
+  revalidatePath("/entry");
   return {
     ok: true,
     totalStudents,
@@ -113,6 +113,24 @@ export async function importStudentSheet(
     periods: rows.map((r) => r.period),
     imported: res.imported,
   };
+}
+
+/** Admin: import a roster CSV for a chosen branch. */
+export async function importStudentSheet(
+  branchId: string,
+  csv: string,
+  filename = "roster.csv",
+) {
+  await requireAdmin();
+  return runStudentImport(branchId, csv, filename);
+}
+
+/** Branch employee: import a roster CSV for their own branch. */
+export async function importMyBranchSheet(csv: string, filename = "roster.csv") {
+  const session = await getSession();
+  if (!session) throw new Error("غير مصرّح");
+  if (!session.branchId) throw new Error("لا يوجد فرع مرتبط بهذا الحساب");
+  return runStudentImport(session.branchId, csv, filename);
 }
 
 // ---- Form presets (admin-managed defaults shown in the branch form) ----

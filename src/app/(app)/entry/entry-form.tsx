@@ -55,6 +55,7 @@ export function EntryForm(props: {
   initialNotes: string;
   presetNationalities?: string[];
   updatedAt: string | null;
+  onBack?: () => void;
 }) {
   const router = useRouter();
   const { t } = useT();
@@ -125,6 +126,19 @@ export function EntryForm(props: {
   return (
     <div className="min-h-screen pb-28">
       <div className="p-4 lg:p-8 space-y-5 mx-auto w-full max-w-[1400px]">
+        {props.onBack && (
+          <button
+            type="button"
+            onClick={props.onBack}
+            className="btn-outline gap-2 no-print"
+          >
+            <svg className="rtl:-scale-x-100" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            {t("entry.backToUpload")}
+          </button>
+        )}
+
         {/* Heading + month picker */}
         <div className="flex items-center justify-between flex-wrap gap-3 no-print">
           <div className="flex items-center gap-2.5">

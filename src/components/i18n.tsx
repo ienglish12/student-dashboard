@@ -131,6 +131,13 @@ export const T: Dict = {
 
   // entry
   "entry.subtitle": { ar: "إدخال البيانات الشهرية", en: "Monthly data entry" },
+  "entry.manual": { ar: "الإدخال اليدوي", en: "Manual entry" },
+  "entry.manualHint": {
+    ar: "تفضّل إدخال البيانات يدوياً بدل رفع ملف؟",
+    en: "Prefer to enter the data manually instead of uploading a file?",
+  },
+  "entry.manualOpen": { ar: "فتح نموذج الإدخال اليدوي", en: "Open the manual entry form" },
+  "entry.backToUpload": { ar: "الرجوع لرفع الملف", en: "Back to upload" },
   "entry.total": { ar: "إجمالي الطلاب", en: "Total students" },
   "entry.startHint": {
     ar: "ابدأ بإدخال عدد الذكور والإناث — الإجمالي بيتحسب تلقائياً.",

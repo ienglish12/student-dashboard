@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { EntryForm } from "./entry-form";
+import { EntryView } from "./entry-view";
 import { emptyNumbers, NUMERIC_FIELDS, type ReportNumbers } from "@/lib/fields";
 import { branchDisplayName } from "@/lib/branches";
 
@@ -46,7 +46,7 @@ export default async function EntryPage({
   }
 
   return (
-    <EntryForm
+    <EntryView
       branchId={branchId}
       branchName={user.branch ? branchDisplayName(user.branch) : ""}
       period={period}
