@@ -28,20 +28,23 @@ export type CreateUserInput = {
   branchId?: string | null;
 };
 
-export async function createUser(input: CreateUserInput) {
+export async function createUser(
+  input: CreateUserInput,
+): Promise<{ ok: boolean; error?: string }> {
   await requireAdmin();
 
   const email = input.email.trim().toLowerCase();
-  if (!email || !email.includes("@")) throw new Error("بريد إلكتروني غير صحيح");
+  if (!email || !email.includes("@"))
+    return { ok: false, error: "بريد إلكتروني غير صحيح" };
   const pwErr = validatePassword(input.password);
-  if (pwErr) throw new Error(pwErr);
+  if (pwErr) return { ok: false, error: pwErr };
   const role = isRole(input.role) ? input.role : "BRANCH";
   const branchId = role === "BRANCH" ? input.branchId || null : null;
   if (role === "BRANCH" && !branchId)
-    throw new Error("لازم تختار فرعًا لمستخدم الفرع");
+    return { ok: false, error: "لازم تختار فرعًا لمستخدم الفرع" };
 
   const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) throw new Error("الإيميل ده مستخدم بالفعل");
+  if (existing) return { ok: false, error: "الإيميل ده مستخدم بالفعل" };
 
   const passwordHash = await bcrypt.hash(input.password, 10);
   await prisma.user.create({
@@ -53,10 +56,13 @@ export async function createUser(input: CreateUserInput) {
 }
 
 /** Reset an existing user's password. */
-export async function resetUserPassword(id: string, password: string) {
+export async function resetUserPassword(
+  id: string,
+  password: string,
+): Promise<{ ok: boolean; error?: string }> {
   await requireAdmin();
   const pwErr = validatePassword(password);
-  if (pwErr) throw new Error(pwErr);
+  if (pwErr) return { ok: false, error: pwErr };
   const passwordHash = await bcrypt.hash(password, 10);
   await prisma.user.update({ where: { id }, data: { passwordHash } });
   revalidatePath("/settings");
@@ -127,12 +133,15 @@ export async function completePasswordReset(
 }
 
 /** Admin: set a new password for the request's user and mark it resolved. */
-export async function resolveResetRequest(id: string, password: string) {
+export async function resolveResetRequest(
+  id: string,
+  password: string,
+): Promise<{ ok: boolean; error?: string }> {
   await requireAdmin();
   const pwErr = validatePassword(password);
-  if (pwErr) throw new Error(pwErr);
+  if (pwErr) return { ok: false, error: pwErr };
   const req = await prisma.passwordResetRequest.findUnique({ where: { id } });
-  if (!req) throw new Error("الطلب غير موجود");
+  if (!req) return { ok: false, error: "الطلب غير موجود" };
   const passwordHash = await bcrypt.hash(password, 10);
   await prisma.user.update({
     where: { email: req.email },
@@ -158,40 +167,41 @@ export async function updateMyAccount(input: {
   email?: string;
   currentPassword: string;
   newPassword?: string;
-}) {
+}): Promise<{ ok: boolean; error?: string }> {
   const session = await getSession();
-  if (!session) throw new Error("غير مصرّح");
+  if (!session) return { ok: false, error: "غير مصرّح" };
 
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
-  if (!user) throw new Error("الحساب غير موجود");
+  if (!user) return { ok: false, error: "الحساب غير موجود" };
 
   // Any change requires confirming the current password.
   const ok = await bcrypt.compare(input.currentPassword ?? "", user.passwordHash);
-  if (!ok) throw new Error("كلمة المرور الحالية غير صحيحة");
+  if (!ok) return { ok: false, error: "كلمة المرور الحالية غير صحيحة" };
 
   const data: { email?: string; passwordHash?: string } = {};
 
   if (input.email !== undefined) {
     const email = input.email.trim().toLowerCase();
-    if (!email || !email.includes("@")) throw new Error("بريد إلكتروني غير صحيح");
+    if (!email || !email.includes("@"))
+      return { ok: false, error: "بريد إلكتروني غير صحيح" };
     if (email !== user.email) {
       const existing = await prisma.user.findUnique({ where: { email } });
-      if (existing) throw new Error("الإيميل ده مستخدم بالفعل");
+      if (existing) return { ok: false, error: "الإيميل ده مستخدم بالفعل" };
       data.email = email;
     }
   }
 
   if (input.newPassword) {
     const pwErr = validatePassword(input.newPassword);
-    if (pwErr) throw new Error(pwErr);
+    if (pwErr) return { ok: false, error: pwErr };
     data.passwordHash = await bcrypt.hash(input.newPassword, 10);
   }
 
-  if (Object.keys(data).length === 0) return { ok: true as const };
+  if (Object.keys(data).length === 0) return { ok: true };
 
   await prisma.user.update({ where: { id: user.id }, data });
   revalidatePath("/settings");
-  return { ok: true as const };
+  return { ok: true };
 }
 
 export async function deleteUser(id: string) {

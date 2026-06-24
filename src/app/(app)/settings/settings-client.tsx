@@ -56,18 +56,23 @@ export function SettingsClient({
     setAccOk(false);
     start(async () => {
       try {
-        await updateMyAccount({
+        const res = await updateMyAccount({
           email: accEmail,
           currentPassword: accCurrent,
           newPassword: accNew || undefined,
         });
+        if (!res.ok) {
+          setAccOk(false);
+          setAccMsg(res.error ?? "حصل خطأ");
+          return;
+        }
         setAccCurrent("");
         setAccNew("");
         setAccOk(true);
         setAccMsg(t("set.accountSaved"));
         refresh();
-      } catch (e) {
-        setAccMsg(e instanceof Error ? e.message : "حصل خطأ");
+      } catch {
+        setAccMsg("تعذّر حفظ التغييرات");
       }
     });
   }
@@ -113,18 +118,22 @@ export function SettingsClient({
     setUMsg(null);
     start(async () => {
       try {
-        await createUser({
+        const res = await createUser({
           email: uEmail,
           password: uPass,
           role: "BRANCH",
           branchId: uBranch || branches[0]?.id,
         });
+        if (!res.ok) {
+          setUMsg(res.error ?? "حصل خطأ");
+          return;
+        }
         setUEmail("");
         setUPass("");
         setUMsg("✓");
         refresh();
-      } catch (e) {
-        setUMsg(e instanceof Error ? e.message : "حصل خطأ");
+      } catch {
+        setUMsg("تعذّر إضافة المستخدم");
       }
     });
   }
@@ -139,7 +148,11 @@ export function SettingsClient({
     const p = prompt("كلمة المرور الجديدة (8 أحرف على الأقل، حروف وأرقام):");
     if (!p) return;
     start(async () => {
-      await resetUserPassword(id, p);
+      const res = await resetUserPassword(id, p);
+      if (!res.ok) {
+        alert(res.error ?? "حصل خطأ");
+        return;
+      }
       refresh();
     });
   }
@@ -149,7 +162,11 @@ export function SettingsClient({
     const p = prompt(`كلمة مرور جديدة لـ ${req.email} (8 أحرف على الأقل، حروف وأرقام):`);
     if (!p) return;
     start(async () => {
-      await resolveResetRequest(req.id, p);
+      const res = await resolveResetRequest(req.id, p);
+      if (!res.ok) {
+        alert(res.error ?? "حصل خطأ");
+        return;
+      }
       refresh();
     });
   }
