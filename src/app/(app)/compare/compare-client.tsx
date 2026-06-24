@@ -13,11 +13,9 @@ import {
 } from "recharts";
 import { aggregate, type Aggregated, type ReportWithRelations } from "@/lib/aggregate";
 import { useT, MONTHS } from "@/components/i18n";
+import { useTheme } from "@/components/theme";
 import { MonthPicker } from "@/components/month-picker";
 import { IconCompare, IconBulb, IconPrint } from "@/components/icons";
-
-const BRAND = "#1d4ed8";
-const NAVY = "#64748b";
 
 export type CmpReport = ReportWithRelations & { period: string };
 
@@ -253,19 +251,24 @@ function CmpChart({
   labelA: string;
   labelB: string;
 }) {
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+  // Lighter, clearly distinct colors in dark mode
+  const colorA = dark ? "#60a5fa" : "#1d4ed8";
+  const colorB = dark ? "#fbbf24" : "#64748b";
   return (
     <div className="card p-5">
       <h3 className="font-extrabold text-ink mb-4">{title}</h3>
-      <div className="h-64">
+      <div className="h-64" dir="ltr">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
-            <XAxis dataKey="name" tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} interval={0} />
-            <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
-            <Tooltip cursor={{ fill: "var(--brand-50)" }} />
+            <XAxis dataKey="name" tick={{ fontSize: 12, fill: "var(--ink-soft)", fontWeight: 600 }} tickMargin={6} interval={0} />
+            <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)", fontWeight: 600 }} tickMargin={6} width={48} />
+            <Tooltip cursor={{ fill: "var(--brand-50)" }} contentStyle={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, color: "var(--ink)" }} />
             <Legend />
-            <Bar dataKey="A" name={labelA} fill={BRAND} radius={[6, 6, 0, 0]} />
-            <Bar dataKey="B" name={labelB} fill={NAVY} radius={[6, 6, 0, 0]} />
+            <Bar dataKey="A" name={labelA} fill={colorA} radius={[6, 6, 0, 0]} />
+            <Bar dataKey="B" name={labelB} fill={colorB} radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
