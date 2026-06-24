@@ -17,6 +17,48 @@ export type AggregatedRow = {
   extras: ReportExtras;
 };
 
+export type DetectedColumn = {
+  key: string; // logical field
+  labelKey: string; // i18n key for display
+  header: string | null; // matched CSV header, or null if not found
+  critical: boolean; // import fails without it
+};
+
+// Logical columns we look for, with header aliases (matched case-insensitively
+// by exact-then-contains). Order here also defines display order.
+const COLUMN_SPECS: {
+  key: keyof typeof EMPTY_CI;
+  labelKey: string;
+  critical: boolean;
+  needles: string[];
+}[] = [
+  { key: "date", labelKey: "csv.date", critical: true, needles: ["date", "enrollment date", "تاريخ", "التاريخ"] },
+  { key: "gender", labelKey: "csv.gender", critical: true, needles: ["gender", "sex", "m/f", "النوع", "الجنس", "جنس"] },
+  { key: "age", labelKey: "csv.age", critical: false, needles: ["date of birth", "dob", "d.o.b", "birth", "age", "year", "العمر", "عمر", "ميلاد", "مواليد", "السن"] },
+  { key: "nat", labelKey: "csv.nat", critical: false, needles: ["nationality", "الجنسية", "جنسية"] },
+  { key: "course", labelKey: "csv.course", critical: false, needles: ["course", "program", "الدورة", "كورس", "البرنامج"] },
+  { key: "cls", labelKey: "csv.cls", critical: false, needles: ["class type", "class", "نوع الفصل", "فصل"] },
+  { key: "level", labelKey: "csv.level", critical: false, needles: ["level", "المستوى", "مستوى"] },
+  { key: "delivery", labelKey: "csv.delivery", critical: false, needles: ["home, on site", "online / onsite", "on site", "onsite", "online", "الحضور", "attendance", "طريقة الحضور"] },
+  { key: "renewal", labelKey: "csv.renewal", critical: false, needles: ["renewal", "renew", "تجديد"] },
+  { key: "consultant", labelKey: "csv.consultant", critical: false, needles: ["educational consultant", "consultant", "sales", "مستشار", "موظف"] },
+  { key: "pkg", labelKey: "csv.pkg", critical: false, needles: ["hours/levels", "hours", "levels", "package", "باقة"] },
+];
+
+const EMPTY_CI = {
+  date: -1,
+  gender: -1,
+  age: -1,
+  nat: -1,
+  course: -1,
+  cls: -1,
+  level: -1,
+  delivery: -1,
+  renewal: -1,
+  consultant: -1,
+  pkg: -1,
+};
+
 /** Minimal RFC-4180-ish CSV parser (handles quotes and commas in fields). */
 export function parseCsv(text: string): string[][] {
   const rows: string[][] = [];
@@ -157,24 +199,24 @@ export function aggregateStudentCsv(text: string): {
   rows: AggregatedRow[];
   totalStudents: number;
   skipped: number;
+  detected: DetectedColumn[];
 } {
   const grid = parseCsv(text).filter((r) => r.some((c) => c.trim() !== ""));
-  if (grid.length < 2) return { rows: [], totalStudents: 0, skipped: 0 };
+  if (grid.length < 2)
+    return { rows: [], totalStudents: 0, skipped: 0, detected: [] };
 
   const headers = grid[0];
-  const ci = {
-    date: findCol(headers, "date", "تاريخ"),
-    age: findCol(headers, "age", "birth", "year", "عمر", "ميلاد"),
-    gender: findCol(headers, "gender", "النوع", "جنس"),
-    nat: findCol(headers, "nationality", "الجنسية", "جنسية"),
-    course: findCol(headers, "course", "الدورة", "كورس"),
-    cls: findCol(headers, "class type", "class", "نوع الفصل", "فصل"),
-    level: findCol(headers, "level", "المستوى", "مستوى"),
-    delivery: findCol(headers, "home, on site", "on site", "online", "الحضور", "attendance"),
-    renewal: findCol(headers, "renewal", "تجديد"),
-    consultant: findCol(headers, "educational consultant", "consultant", "مستشار", "موظف"),
-    pkg: findCol(headers, "hours/levels", "hours", "levels", "package", "باقة"),
-  };
+  const ci = { ...EMPTY_CI };
+  const detected: DetectedColumn[] = COLUMN_SPECS.map((spec) => {
+    const idx = findCol(headers, ...spec.needles);
+    ci[spec.key] = idx;
+    return {
+      key: spec.key,
+      labelKey: spec.labelKey,
+      header: idx >= 0 ? (headers[idx] ?? "").trim() : null,
+      critical: spec.critical,
+    };
+  });
 
   const byPeriod = new Map<
     string,
@@ -305,5 +347,5 @@ export function aggregateStudentCsv(text: string): {
     },
   }));
 
-  return { rows, totalStudents, skipped };
+  return { rows, totalStudents, skipped, detected };
 }

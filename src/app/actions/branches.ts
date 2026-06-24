@@ -76,9 +76,16 @@ async function runStudentImport(
 ) {
   if (!branchId) throw new Error("اختر الفرع أولاً");
   const { aggregateStudentCsv } = await import("@/lib/student-csv");
-  const { rows, totalStudents, skipped } = aggregateStudentCsv(csv);
+  const { rows, totalStudents, skipped, detected } = aggregateStudentCsv(csv);
   if (rows.length === 0) {
-    return { ok: false, totalStudents: 0, skipped, periods: [] as string[], imported: 0 };
+    return {
+      ok: false,
+      totalStudents: 0,
+      skipped,
+      periods: [] as string[],
+      imported: 0,
+      columns: detected,
+    };
   }
   const items = rows.map((r) => ({
     branchId,
@@ -112,6 +119,7 @@ async function runStudentImport(
     skipped,
     periods: rows.map((r) => r.period),
     imported: res.imported,
+    columns: detected,
   };
 }
 

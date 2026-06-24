@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { importMyBranchSheet } from "@/app/actions/branches";
 import { useT } from "@/components/i18n";
 import { IconUpload } from "@/components/icons";
+import { ImportSummary, type DetectedColumn } from "@/components/import-summary";
 import { EntryForm } from "./entry-form";
 import type { ReportNumbers } from "@/lib/fields";
 
@@ -45,6 +46,7 @@ function UploadView({
   const [pending, start] = useTransition();
   const [msg, setMsg] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
+  const [cols, setCols] = useState<DetectedColumn[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -57,6 +59,7 @@ function UploadView({
       start(async () => {
         try {
           const res = await importMyBranchSheet(text, file.name);
+          setCols(res.columns ?? []);
           if (!res.ok) {
             setMsg(t("imp.noData"));
           } else {
@@ -119,6 +122,8 @@ function UploadView({
             </p>
           )}
         </section>
+
+        {cols.length > 0 && <ImportSummary columns={cols} />}
 
         <div className="card p-5 text-sm text-ink-soft leading-relaxed">
           <p className="font-bold text-ink mb-2">{t("imp.howTitle")}</p>

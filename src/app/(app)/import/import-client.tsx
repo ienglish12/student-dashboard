@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { importStudentSheet } from "@/app/actions/branches";
 import { useT } from "@/components/i18n";
 import { IconUpload } from "@/components/icons";
+import { ImportSummary, type DetectedColumn } from "@/components/import-summary";
 
 export function ImportClient({ branches }: { branches: { id: string; name: string }[] }) {
   const router = useRouter();
@@ -13,6 +14,7 @@ export function ImportClient({ branches }: { branches: { id: string; name: strin
   const [impBranch, setImpBranch] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
+  const [cols, setCols] = useState<DetectedColumn[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -30,6 +32,7 @@ export function ImportClient({ branches }: { branches: { id: string; name: strin
       start(async () => {
         try {
           const res = await importStudentSheet(impBranch, text, file.name);
+          setCols(res.columns ?? []);
           if (!res.ok) {
             setMsg(t("imp.noData"));
           } else {
@@ -108,6 +111,8 @@ export function ImportClient({ branches }: { branches: { id: string; name: strin
             </p>
           )}
         </section>
+
+        {cols.length > 0 && <ImportSummary columns={cols} />}
 
         <div className="card p-5 text-sm text-ink-soft leading-relaxed">
           <p className="font-bold text-ink mb-2">{t("imp.howTitle")}</p>
