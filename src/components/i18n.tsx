@@ -43,13 +43,14 @@ export const T: Dict = {
   },
 
   // compare
-  "cmp.title": { ar: "مقارنة الفترات", en: "Compare periods" },
+  "cmp.title": { ar: "المقارنة", en: "Compare" },
   "cmp.subtitle": {
-    ar: "قارن بين فترتين: شهر بشهر، سنة بسنة، أو مدة بمدة.",
-    en: "Compare two periods: month vs month, year vs year, or range vs range.",
+    ar: "قارن بين فرع وفرع، أو نفس الفرع عبر شهور مختلفة — في نفس الشهر أو شهور مختلفة.",
+    en: "Compare branch vs branch, or the same branch across months — same month or different months.",
   },
-  "cmp.periodA": { ar: "الفترة (أ)", en: "Period A" },
-  "cmp.periodB": { ar: "الفترة (ب)", en: "Period B" },
+  "cmp.periodA": { ar: "الجهة (أ)", en: "Side A" },
+  "cmp.periodB": { ar: "الجهة (ب)", en: "Side B" },
+  "cmp.branch": { ar: "الفرع", en: "Branch" },
   "cmp.month": { ar: "شهر", en: "Month" },
   "cmp.year": { ar: "سنة", en: "Year" },
   "cmp.range": { ar: "مدة", en: "Range" },
@@ -57,8 +58,17 @@ export const T: Dict = {
   "cmp.to": { ar: "إلى", en: "To" },
   "cmp.metric": { ar: "المؤشر", en: "Metric" },
   "cmp.diff": { ar: "الفرق", en: "Change" },
-  "cmp.noData": { ar: "لا توجد بيانات في الفترة المختارة.", en: "No data in the selected period." },
+  "cmp.noData": { ar: "لا توجد بيانات في الجهتين المختارتين.", en: "No data for the selected sides." },
   "cmp.allBranches": { ar: "كل الفروع", en: "All branches" },
+  "cmp.overview": { ar: "نظرة عامة", en: "Overview" },
+  "cmp.conclusions": { ar: "الملاحظات والاستنتاجات", en: "Notes & conclusions" },
+  "cmp.autoNotes": { ar: "استنتاجات تلقائية", en: "Auto insights" },
+  "cmp.yourNotes": { ar: "ملاحظاتك", en: "Your notes" },
+  "cmp.notesPlaceholder": {
+    ar: "اكتب ملاحظاتك واستنتاجاتك على المقارنة هنا…",
+    en: "Write your own notes and conclusions about this comparison…",
+  },
+  "cmp.print": { ar: "طباعة", en: "Print" },
 
   // reports tracker
   "rep.title": { ar: "متابعة التقارير", en: "Submission tracker" },

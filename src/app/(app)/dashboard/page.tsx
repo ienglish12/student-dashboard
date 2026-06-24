@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { aggregate, type ReportWithRelations } from "@/lib/aggregate";
 import { DashboardClient } from "./dashboard-client";
+import { branchDisplayName, sortBranches, toBranchRef } from "@/lib/branches";
 
 function currentPeriod() {
   return new Date().toISOString().slice(0, 7);
@@ -26,22 +27,27 @@ export default async function DashboardPage({
       where: { period },
       include: { branch: true, nationalities: true, courses: true },
     }),
-    prisma.branch.findMany({ orderBy: { name: "asc" } }),
+    prisma.branch.findMany(),
   ]);
+  const orderedBranches = sortBranches(branches);
+  const displayReports = reports.map((r) => ({
+    ...r,
+    branch: { ...r.branch, name: branchDisplayName(r.branch) },
+  }));
 
   // When a branch is selected, scope the analysis to just that branch.
   const scopedReports =
     branchFilter === "all"
-      ? reports
-      : reports.filter((r) => r.branchId === branchFilter);
+      ? displayReports
+      : displayReports.filter((r) => r.branchId === branchFilter);
   const scopedBranches =
     branchFilter === "all"
-      ? branches
-      : branches.filter((b) => b.id === branchFilter);
+      ? orderedBranches
+      : orderedBranches.filter((b) => b.id === branchFilter);
 
   const data = aggregate(
     scopedReports as unknown as ReportWithRelations[],
-    scopedBranches.map((b) => ({ id: b.id, name: b.name })),
+    scopedBranches.map(toBranchRef),
   );
 
   // Notes for the selected branch (only meaningful in single-branch view).
@@ -54,7 +60,7 @@ export default async function DashboardPage({
     <DashboardClient
       period={period}
       data={data}
-      branches={branches.map((b) => ({ id: b.id, name: b.name }))}
+      branches={orderedBranches.map(toBranchRef)}
       branchFilter={branchFilter}
       branchNotes={branchNotes}
     />

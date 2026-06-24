@@ -2,19 +2,10 @@ import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
+import { DEFAULT_BRANCHES } from "../src/lib/branches";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
-
-const BRANCHES = [
-  { name: "فرع القرهود (Al Garhoud)", slug: "al-garhoud" },
-  { name: "فرع الشارقة (Sharjah)", slug: "sharjah" },
-  { name: "فرع أبوظبي (Abu Dhabi)", slug: "abu-dhabi" },
-  { name: "فرع العين (Al Ain)", slug: "al-ain" },
-  { name: "فرع الشيخ زايد (Sheikh Zayed)", slug: "sheikh-zayed" },
-  { name: "فرع القصيص (Al Qusais)", slug: "al-qusais" },
-  { name: "الفرع السابع (Branch 7)", slug: "branch-7" },
-];
 
 const PERIOD = "2025-12";
 
@@ -40,12 +31,20 @@ function ages(total: number) {
 async function main() {
   // Branches
   const branches = [];
-  for (const b of BRANCHES) {
-    const branch = await prisma.branch.upsert({
-      where: { slug: b.slug },
-      update: { name: b.name },
-      create: b,
+  for (const b of DEFAULT_BRANCHES) {
+    const branchMatch = await prisma.branch.findFirst({
+      where: {
+        OR: [{ slug: b.slug }, ...b.legacySlugs.map((slug) => ({ slug }))],
+      },
     });
+    const branch = branchMatch
+      ? await prisma.branch.update({
+          where: { id: branchMatch.id },
+          data: { name: b.name, slug: b.slug },
+        })
+      : await prisma.branch.create({
+          data: { name: b.name, slug: b.slug },
+        });
     branches.push(branch);
   }
 

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { TopNav } from "@/components/top-nav";
 import type { Role } from "@/lib/enums";
+import { branchDisplayName } from "@/lib/branches";
 
 export default async function AppLayout({
   children,
@@ -15,7 +16,7 @@ export default async function AppLayout({
     <div className="min-h-screen flex flex-col">
       <TopNav
         role={user.role as Role}
-        branchName={user.branch?.name}
+        branchName={user.branch ? branchDisplayName(user.branch) : null}
         email={user.email}
       />
       <main className="flex-1 min-w-0">{children}</main>

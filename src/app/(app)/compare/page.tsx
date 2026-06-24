@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NUMERIC_FIELDS } from "@/lib/fields";
 import { CompareClient, type CmpReport } from "./compare-client";
+import { branchDisplayName, sortBranches, toBranchRef } from "@/lib/branches";
 
 export default async function ComparePage() {
   const session = await getSession();
@@ -10,7 +11,7 @@ export default async function ComparePage() {
   if (session.role !== "ADMIN") redirect("/entry");
 
   const [branches, reports] = await Promise.all([
-    prisma.branch.findMany({ orderBy: { name: "asc" } }),
+    prisma.branch.findMany(),
     prisma.monthlyReport.findMany({
       include: { branch: true, nationalities: true, courses: true },
     }),
@@ -21,7 +22,7 @@ export default async function ComparePage() {
     for (const k of NUMERIC_FIELDS) nums[k] = r[k] as number;
     return {
       branchId: r.branchId,
-      branch: { id: r.branch.id, name: r.branch.name },
+      branch: { id: r.branch.id, name: branchDisplayName(r.branch) },
       period: r.period,
       ...nums,
       nationalities: r.nationalities.map((n) => ({ name: n.name, count: n.count })),
@@ -31,7 +32,7 @@ export default async function ComparePage() {
 
   return (
     <CompareClient
-      branches={branches.map((b) => ({ id: b.id, name: b.name }))}
+      branches={sortBranches(branches).map(toBranchRef)}
       reports={payload}
     />
   );

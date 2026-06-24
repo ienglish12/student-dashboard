@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ReportsClient, type MonthRow } from "./reports-client";
+import { sortBranches, toBranchRef } from "@/lib/branches";
 
 export default async function ReportsPage() {
   const session = await getSession();
@@ -9,7 +10,7 @@ export default async function ReportsPage() {
   if (session.role !== "ADMIN") redirect("/entry");
 
   const [branches, reports, uploads] = await Promise.all([
-    prisma.branch.findMany({ orderBy: { name: "asc" } }),
+    prisma.branch.findMany(),
     prisma.monthlyReport.findMany({
       select: { branchId: true, period: true, male: true, female: true },
     }),
@@ -48,10 +49,11 @@ export default async function ReportsPage() {
     period,
     cells: Object.fromEntries(map.get(period)!),
   }));
+  const orderedBranches = sortBranches(branches);
 
   return (
     <ReportsClient
-      branches={branches.map((b) => ({ id: b.id, name: b.name }))}
+      branches={orderedBranches.map(toBranchRef)}
       rows={rows}
     />
   );

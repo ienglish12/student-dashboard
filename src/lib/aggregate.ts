@@ -40,6 +40,7 @@ export function aggregate(
 
   const submittedIds = new Set(valid.map((r) => r.branchId));
   const missing = allBranches.filter((b) => !submittedIds.has(b.id));
+  const branchOrder = new Map(allBranches.map((b, index) => [b.id, index]));
 
   // ---- Estimated average age (weighted by bucket midpoints) ----
   const ageWeighted = (r: ReportWithRelations) =>
@@ -84,7 +85,11 @@ export function aggregate(
         renewalRate: pct(r.renewals, t),
       };
     })
-    .sort((a, b) => b.total - a.total);
+    .sort(
+      (a, b) =>
+        (branchOrder.get(a.branchId) ?? Number.MAX_SAFE_INTEGER) -
+        (branchOrder.get(b.branchId) ?? Number.MAX_SAFE_INTEGER),
+    );
 
   // ---- Top nationalities (sum by name, top 8) ----
   const natMap = new Map<string, number>();
@@ -193,8 +198,8 @@ export function aggregate(
     packages.hours + packages.levels + packages.both > 0;
 
   // ---- Auto insights (SPEC §5) ----
-  const highest = byBranch[0] ?? null;
-  const lowest = byBranch.length ? byBranch[byBranch.length - 1] : null;
+  const highest = [...byBranch].sort((a, b) => b.total - a.total)[0] ?? null;
+  const lowest = [...byBranch].sort((a, b) => a.total - b.total)[0] ?? null;
   const mostDiverse = [...byBranch].sort(
     (a, b) => b.uniqueNationalities - a.uniqueNationalities,
   )[0] ?? null;

@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { EntryForm } from "./entry-form";
 import { emptyNumbers, NUMERIC_FIELDS, type ReportNumbers } from "@/lib/fields";
+import { branchDisplayName } from "@/lib/branches";
 
 function currentPeriod() {
   return new Date().toISOString().slice(0, 7);
@@ -47,7 +48,7 @@ export default async function EntryPage({
   return (
     <EntryForm
       branchId={branchId}
-      branchName={user.branch?.name ?? ""}
+      branchName={user.branch ? branchDisplayName(user.branch) : ""}
       period={period}
       initialNumbers={numbers}
       initialNationalities={

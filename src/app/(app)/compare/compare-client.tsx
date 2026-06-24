@@ -11,10 +11,10 @@ import {
   Legend,
   CartesianGrid,
 } from "recharts";
-import { aggregate, type ReportWithRelations } from "@/lib/aggregate";
+import { aggregate, type Aggregated, type ReportWithRelations } from "@/lib/aggregate";
 import { useT, MONTHS } from "@/components/i18n";
 import { MonthPicker } from "@/components/month-picker";
-import { IconCompare } from "@/components/icons";
+import { IconCompare, IconBulb, IconPrint } from "@/components/icons";
 
 const BRAND = "#1d4ed8";
 const NAVY = "#64748b";
@@ -22,7 +22,14 @@ const NAVY = "#64748b";
 export type CmpReport = ReportWithRelations & { period: string };
 
 type Mode = "month" | "year" | "range";
-type Spec = { mode: Mode; m: string; y: number; from: string; to: string };
+type Spec = { branch: string; mode: Mode; m: string; y: number; from: string; to: string };
+
+const CLASS_LABEL: Record<string, string> = {
+  classGroupAdult: "f.groupAdult",
+  classVipAdult: "f.vipAdult",
+  classVipKid: "f.vipKid",
+  classOther: "f.classOther",
+};
 
 function expand(spec: Spec): Set<string> {
   const out = new Set<string>();
@@ -59,36 +66,49 @@ export function CompareClient({
   const prev = prevDate.toISOString().slice(0, 7);
   const yr = now.getFullYear();
 
-  const [branch, setBranch] = useState("all");
-  const [a, setA] = useState<Spec>({ mode: "month", m: prev, y: yr - 1, from: prev, to: cur });
-  const [b, setB] = useState<Spec>({ mode: "month", m: cur, y: yr, from: prev, to: cur });
+  const [notes, setNotes] = useState("");
+  const [a, setA] = useState<Spec>({ branch: "all", mode: "month", m: prev, y: yr - 1, from: prev, to: cur });
+  const [b, setB] = useState<Spec>({ branch: "all", mode: "month", m: cur, y: yr, from: prev, to: cur });
 
   const agg = (spec: Spec) => {
     const periods = expand(spec);
     const rs = reports.filter(
-      (r) => periods.has(r.period) && (branch === "all" || r.branchId === branch),
+      (r) => periods.has(r.period) && (spec.branch === "all" || r.branchId === spec.branch),
     );
     const bs =
-      branch === "all" ? branches : branches.filter((x) => x.id === branch);
+      spec.branch === "all" ? branches : branches.filter((x) => x.id === spec.branch);
     return aggregate(rs as ReportWithRelations[], bs);
   };
 
-  const A = useMemo(() => agg(a), [a, branch, reports]); // eslint-disable-line react-hooks/exhaustive-deps
-  const B = useMemo(() => agg(b), [b, branch, reports]); // eslint-disable-line react-hooks/exhaustive-deps
+  const A = useMemo(() => agg(a), [a, reports]); // eslint-disable-line react-hooks/exhaustive-deps
+  const B = useMemo(() => agg(b), [b, reports]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const labelA = specLabel(a, lang);
-  const labelB = specLabel(b, lang);
+  const labelA = sideLabel(a, branches, lang, t);
+  const labelB = sideLabel(b, branches, lang, t);
 
   const overviewData = [
-    { name: t("kpi.total"), [labelA]: A.counts.total, [labelB]: B.counts.total },
-    { name: t("legend.male"), [labelA]: A.counts.male, [labelB]: B.counts.male },
-    { name: t("legend.female"), [labelA]: A.counts.female, [labelB]: B.counts.female },
+    { name: t("kpi.total"), A: A.counts.total, B: B.counts.total },
+    { name: t("legend.male"), A: A.counts.male, B: B.counts.male },
+    { name: t("legend.female"), A: A.counts.female, B: B.counts.female },
   ];
   const ageData = A.ageGroups.map((g, i) => ({
     name: g.label,
-    [labelA]: g.count,
-    [labelB]: B.ageGroups[i]?.count ?? 0,
+    A: g.count,
+    B: B.ageGroups[i]?.count ?? 0,
   }));
+  const levelData = mergeByKey(
+    A.levels.map((l) => ({ key: l.key, name: l.label, count: l.count })),
+    B.levels,
+  );
+  const deliveryData = mergeByKey(
+    A.deliveryOverall.map((d) => ({ key: d.key, name: d.label, count: d.count })),
+    B.deliveryOverall,
+  );
+  const classData = mergeByKey(
+    A.classOverall.map((c) => ({ key: c.key, name: t(CLASS_LABEL[c.key] ?? c.key), count: c.count })),
+    B.classOverall,
+  );
+  const natData = mergeByName(A.topNationalities, B.topNationalities).slice(0, 10);
 
   const metrics: { label: string; a: number; b: number; suffix?: string; pp?: boolean }[] = [
     { label: t("kpi.total"), a: A.counts.total, b: B.counts.total },
@@ -97,6 +117,9 @@ export function CompareClient({
     { label: t("kpi.avgAge"), a: A.counts.avgAge, b: B.counts.avgAge },
     { label: t("kpi.renewal"), a: A.counts.renewalRate, b: B.counts.renewalRate, suffix: "%", pp: true },
   ];
+
+  const conclusions = buildConclusions(A, B, labelA, labelB, lang);
+  const noData = A.counts.total === 0 && B.counts.total === 0;
 
   return (
     <div className="min-h-screen">
@@ -111,32 +134,31 @@ export function CompareClient({
               <p className="text-xs text-ink-soft">{t("cmp.subtitle")}</p>
             </div>
           </div>
-          <select
-            value={branch}
-            onChange={(e) => setBranch(e.target.value)}
-            className="field w-auto"
+          <button
+            onClick={() => window.print()}
+            className="card flex items-center gap-2 px-3 py-2 text-sm font-bold text-ink-soft hover:text-brand no-print"
           >
-            <option value="all">{t("cmp.allBranches")}</option>
-            {branches.map((x) => (
-              <option key={x.id} value={x.id}>
-                {x.name}
-              </option>
-            ))}
-          </select>
+            <IconPrint width={18} height={18} />
+            {t("cmp.print")}
+          </button>
         </div>
 
-        {/* Period selectors */}
+        {/* Side selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <PeriodCard title={t("cmp.periodA")} spec={a} setSpec={setA} t={t} accent="brand" />
-          <PeriodCard title={t("cmp.periodB")} spec={b} setSpec={setB} t={t} accent="navy" />
+          <SideCard title={t("cmp.periodA")} spec={a} setSpec={setA} t={t} branches={branches} accent="brand" />
+          <SideCard title={t("cmp.periodB")} spec={b} setSpec={setB} t={t} branches={branches} accent="navy" />
         </div>
 
-        {/* Results */}
+        {noData && (
+          <div className="card p-4 text-center text-ink-soft text-sm">{t("cmp.noData")}</div>
+        )}
+
+        {/* Results table */}
         <div className="card p-0 overflow-hidden">
           <div className="grid grid-cols-3 bg-canvas text-sm font-bold text-ink-soft">
             <div className="p-3">{t("cmp.metric")}</div>
-            <div className="p-3 text-center text-brand">{specLabel(a, lang)}</div>
-            <div className="p-3 text-center text-ink">{specLabel(b, lang)}</div>
+            <div className="p-3 text-center text-brand">{labelA}</div>
+            <div className="p-3 text-center text-ink">{labelB}</div>
           </div>
           {metrics.map((m) => {
             const diff = Math.round((m.b - m.a) * 10) / 10;
@@ -171,62 +193,106 @@ export function CompareClient({
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="card p-5">
-            <h3 className="font-extrabold text-ink mb-4">{t("kpi.total")} / {t("legend.male")} / {t("legend.female")}</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={overviewData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
-                  <XAxis dataKey="name" tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
-                  <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
-                  <Tooltip cursor={{ fill: "var(--brand-50)" }} />
-                  <Legend />
-                  <Bar dataKey={labelA} fill={BRAND} radius={[6, 6, 0, 0]} />
-                  <Bar dataKey={labelB} fill={NAVY} radius={[6, 6, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+          <CmpChart title={t("cmp.overview")} data={overviewData} labelA={labelA} labelB={labelB} />
+          <CmpChart title={t("card.ageGroups")} data={ageData} labelA={labelA} labelB={labelB} />
+          <CmpChart title={t("card.levels")} data={levelData} labelA={labelA} labelB={labelB} />
+          <CmpChart title={t("sec.delivery")} data={deliveryData} labelA={labelA} labelB={labelB} />
+          <CmpChart title={t("sec.classType")} data={classData} labelA={labelA} labelB={labelB} />
+          <CmpChart title={t("card.topNats")} data={natData} labelA={labelA} labelB={labelB} />
+        </div>
+
+        {/* Notes & conclusions */}
+        <div className="rounded-2xl bg-navy text-white p-6 space-y-5">
+          <div className="flex items-center gap-2">
+            <IconBulb className="text-warning" />
+            <h3 className="font-extrabold">{t("cmp.conclusions")}</h3>
           </div>
-          <div className="card p-5">
-            <h3 className="font-extrabold text-ink mb-4">{t("card.ageGroups")}</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={ageData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
-                  <XAxis dataKey="name" tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
-                  <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
-                  <Tooltip cursor={{ fill: "var(--brand-50)" }} />
-                  <Legend />
-                  <Bar dataKey={labelA} fill={BRAND} radius={[6, 6, 0, 0]} />
-                  <Bar dataKey={labelB} fill={NAVY} radius={[6, 6, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+
+          <div>
+            <p className="text-xs text-white/50 mb-2">{t("cmp.autoNotes")}</p>
+            <ul className="space-y-2">
+              {conclusions.map((c, i) => (
+                <li key={i} className="flex gap-2 text-sm leading-relaxed">
+                  <span className="text-warning shrink-0">•</span>
+                  <span>{c}</span>
+                </li>
+              ))}
+            </ul>
           </div>
+
+          <div className="no-print">
+            <p className="text-xs text-white/50 mb-2">{t("cmp.yourNotes")}</p>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder={t("cmp.notesPlaceholder")}
+              rows={4}
+              className="w-full rounded-xl bg-white/10 border border-white/15 p-3 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-warning resize-y"
+            />
+          </div>
+          {notes.trim() && (
+            <div className="hidden print:block">
+              <p className="text-xs text-white/50 mb-1">{t("cmp.yourNotes")}</p>
+              <p className="text-sm whitespace-pre-wrap leading-relaxed">{notes}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function PeriodCard({
+function CmpChart({
+  title,
+  data,
+  labelA,
+  labelB,
+}: {
+  title: string;
+  data: { name: string; A: number; B: number }[];
+  labelA: string;
+  labelB: string;
+}) {
+  return (
+    <div className="card p-5">
+      <h3 className="font-extrabold text-ink mb-4">{title}</h3>
+      <div className="h-64">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
+            <XAxis dataKey="name" tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} interval={0} />
+            <YAxis tick={{ fontSize: 12, fill: "var(--ink-soft)" }} tickMargin={6} />
+            <Tooltip cursor={{ fill: "var(--brand-50)" }} />
+            <Legend />
+            <Bar dataKey="A" name={labelA} fill={BRAND} radius={[6, 6, 0, 0]} />
+            <Bar dataKey="B" name={labelB} fill={NAVY} radius={[6, 6, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+function SideCard({
   title,
   spec,
   setSpec,
   t,
+  branches,
   accent,
 }: {
   title: string;
   spec: Spec;
   setSpec: (s: Spec) => void;
   t: (k: string) => string;
+  branches: { id: string; name: string }[];
   accent: "brand" | "navy";
 }) {
   const years = Array.from({ length: 7 }, (_, i) => new Date().getFullYear() - 5 + i);
   const modes: Mode[] = ["month", "year", "range"];
   return (
-    <div className="card p-4">
-      <div className="flex items-center justify-between mb-3">
+    <div className="card p-4 space-y-3">
+      <div className="flex items-center justify-between">
         <span className={`font-extrabold ${accent === "brand" ? "text-brand" : "text-ink"}`}>
           {title}
         </span>
@@ -243,6 +309,22 @@ function PeriodCard({
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-ink-soft shrink-0">{t("cmp.branch")}</span>
+        <select
+          value={spec.branch}
+          onChange={(e) => setSpec({ ...spec, branch: e.target.value })}
+          className="field w-auto"
+        >
+          <option value="all">{t("cmp.allBranches")}</option>
+          {branches.map((x) => (
+            <option key={x.id} value={x.id}>
+              {x.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {spec.mode === "month" && (
@@ -273,7 +355,38 @@ function PeriodCard({
   );
 }
 
-function specLabel(spec: Spec, lang: "ar" | "en") {
+function mergeByKey(
+  aRows: { key: string; name: string; count: number }[],
+  bRows: { key: string; count: number }[],
+) {
+  const bMap = new Map(bRows.map((r) => [r.key, r.count]));
+  return aRows.map((r) => ({ name: r.name, A: r.count, B: bMap.get(r.key) ?? 0 }));
+}
+
+function mergeByName(
+  aRows: { name: string; count: number }[],
+  bRows: { name: string; count: number }[],
+) {
+  const aMap = new Map(aRows.map((r) => [r.name, r.count]));
+  const bMap = new Map(bRows.map((r) => [r.name, r.count]));
+  const names = new Set([...aMap.keys(), ...bMap.keys()]);
+  return [...names]
+    .map((name) => ({ name, A: aMap.get(name) ?? 0, B: bMap.get(name) ?? 0 }))
+    .sort((x, y) => y.A + y.B - (x.A + x.B));
+}
+
+function sideLabel(
+  spec: Spec,
+  branches: { id: string; name: string }[],
+  lang: "ar" | "en",
+  t: (k: string) => string,
+) {
+  const branchName =
+    spec.branch === "all" ? t("cmp.allBranches") : branches.find((x) => x.id === spec.branch)?.name ?? "";
+  return `${branchName} · ${periodLabel(spec, lang)}`;
+}
+
+function periodLabel(spec: Spec, lang: "ar" | "en") {
   const m = (p: string) => {
     const [y, mm] = p.split("-");
     return `${MONTHS[lang][parseInt(mm, 10) - 1] ?? mm} ${y}`;
@@ -281,4 +394,85 @@ function specLabel(spec: Spec, lang: "ar" | "en") {
   if (spec.mode === "month") return m(spec.m);
   if (spec.mode === "year") return String(spec.y);
   return `${m(spec.from)} → ${m(spec.to)}`;
+}
+
+function pctChange(a: number, b: number) {
+  if (a === 0) return b === 0 ? 0 : 100;
+  return Math.round(((b - a) / a) * 1000) / 10;
+}
+
+function buildConclusions(
+  A: Aggregated,
+  B: Aggregated,
+  la: string,
+  lb: string,
+  lang: "ar" | "en",
+): string[] {
+  const ar = lang === "ar";
+  if (A.counts.total === 0 && B.counts.total === 0) {
+    return [ar ? "لا توجد بيانات للمقارنة في الجهتين المختارتين." : "No data to compare for the selected sides."];
+  }
+
+  const out: string[] = [];
+  const dt = pctChange(A.counts.total, B.counts.total);
+  const totalDiff = Math.abs(B.counts.total - A.counts.total);
+
+  // Headline — total students
+  if (dt > 0) {
+    out.push(
+      ar
+        ? `«${lb}» أعلى في إجمالي الطلاب من «${la}» بفارق ${totalDiff} طالباً (+${dt}%): ${B.counts.total} مقابل ${A.counts.total}.`
+        : `"${lb}" leads "${la}" in total students by ${totalDiff} (+${dt}%): ${B.counts.total} vs ${A.counts.total}.`,
+    );
+  } else if (dt < 0) {
+    out.push(
+      ar
+        ? `«${lb}» أقل في إجمالي الطلاب من «${la}» بفارق ${totalDiff} طالباً (${dt}%): ${B.counts.total} مقابل ${A.counts.total}.`
+        : `"${lb}" trails "${la}" in total students by ${totalDiff} (${dt}%): ${B.counts.total} vs ${A.counts.total}.`,
+    );
+  } else {
+    out.push(
+      ar
+        ? `الإجمالي متساوٍ بين «${la}» و«${lb}» عند ${A.counts.total} طالباً.`
+        : `Totals are equal between "${la}" and "${lb}" at ${A.counts.total} students.`,
+    );
+  }
+
+  // Gender split
+  out.push(
+    ar
+      ? `نسبة الذكور تغيّرت من ${A.counts.malePct}% إلى ${B.counts.malePct}%، والإناث من ${A.counts.femalePct}% إلى ${B.counts.femalePct}%.`
+      : `Male share moved from ${A.counts.malePct}% to ${B.counts.malePct}%, female from ${A.counts.femalePct}% to ${B.counts.femalePct}%.`,
+  );
+
+  // Average age
+  if (A.counts.avgAge !== B.counts.avgAge) {
+    out.push(
+      ar
+        ? `متوسط العمر تغيّر من ${A.counts.avgAge} إلى ${B.counts.avgAge} سنة.`
+        : `Average age changed from ${A.counts.avgAge} to ${B.counts.avgAge} years.`,
+    );
+  }
+
+  // Renewal rate (percentage points)
+  const dr = Math.round((B.counts.renewalRate - A.counts.renewalRate) * 10) / 10;
+  if (dr !== 0) {
+    out.push(
+      ar
+        ? `نسبة التجديد ${dr > 0 ? "ارتفعت" : "انخفضت"} بمقدار ${Math.abs(dr)} نقطة مئوية (${A.counts.renewalRate}% ← ${B.counts.renewalRate}%).`
+        : `Renewal rate ${dr > 0 ? "rose" : "fell"} by ${Math.abs(dr)} pp (${A.counts.renewalRate}% → ${B.counts.renewalRate}%).`,
+    );
+  }
+
+  // Dominant nationality on side B
+  const topNatB = B.topNationalities[0];
+  if (topNatB) {
+    out.push(
+      ar
+        ? `أكثر جنسية في «${lb}» هي ${topNatB.name} بنسبة ${topNatB.pct}%.`
+        : `The largest nationality in "${lb}" is ${topNatB.name} at ${topNatB.pct}%.`,
+    );
+  }
+
+  return out;
 }

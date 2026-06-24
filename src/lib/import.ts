@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { branchDisplayName } from "@/lib/branches";
 import { NUMERIC_FIELDS } from "@/lib/fields";
 import { isCourseType } from "@/lib/enums";
 
@@ -29,9 +30,17 @@ export async function applyImport(items: ImportItem[]) {
 
   const branches = await prisma.branch.findMany();
   const bySlug = new Map(branches.map((b) => [b.slug, b.id]));
-  const byName = new Map(branches.map((b) => [b.name.trim(), b.id]));
+  const byName = new Map(
+    branches.flatMap((b) => [
+      [b.name.trim(), b.id],
+      [branchDisplayName(b).trim(), b.id],
+    ]),
+  );
   const byNameLower = new Map(
-    branches.map((b) => [b.name.trim().toLowerCase(), b.id]),
+    branches.flatMap((b) => [
+      [b.name.trim().toLowerCase(), b.id],
+      [branchDisplayName(b).trim().toLowerCase(), b.id],
+    ]),
   );
 
   let imported = 0;

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/actions/auth";
 import { ThemeToggle } from "@/components/theme";
 import { useT, LangToggle } from "@/components/i18n";
+import { BrandLogo } from "@/components/brand-logo";
 import {
   IconDashboard,
   IconSettings,
@@ -44,13 +45,8 @@ export function TopNav({
       <div className="flex items-center gap-4 h-16 px-4 lg:px-8">
         {/* Brand */}
         <div className="flex items-center gap-2.5 shrink-0">
-          <div className="size-9 rounded-xl bg-navy grid place-items-center text-white">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M7 15v-3M12 15V9M17 15v-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-            </svg>
-          </div>
+          <BrandLogo size="nav" />
           <div className="hidden sm:block">
-            <p className="font-extrabold text-ink leading-tight">{t("app.name")}</p>
             <p className="text-[10px] text-ink-soft -mt-0.5">{t("app.tagline")}</p>
           </div>
         </div>
