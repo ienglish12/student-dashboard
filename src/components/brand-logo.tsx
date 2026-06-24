@@ -4,29 +4,34 @@ type BrandLogoProps = {
   size?: "login" | "nav";
 };
 
-const styles = {
-  login: {
-    wrap: "h-40 w-40 sm:h-48 sm:w-48 rounded-[2rem] bg-white p-3 shadow-sm ring-1 ring-line",
-    image: "object-contain",
-  },
-  nav: {
-    wrap: "h-12 w-12 rounded-2xl bg-white p-1.5 shadow-sm ring-1 ring-line",
-    image: "object-contain",
-  },
+const sizes = {
+  login: "h-36 w-36 sm:h-44 sm:w-44",
+  nav: "h-11 w-11",
 };
 
 export function BrandLogo({ size = "nav" }: BrandLogoProps) {
-  const s = styles[size];
+  const box = sizes[size];
+  const priority = size === "login";
 
   return (
-    <div className={s.wrap} aria-label="iEnglish Language Institute">
+    <div className={`relative ${box}`} aria-label="iEnglish Language Institute">
+      {/* Light mode → colored logo */}
       <Image
-        src="/ienglish-logo.png"
+        src="/ienglish-logo-light.svg"
         alt="iEnglish Language Institute"
-        width={1080}
-        height={1080}
-        priority={size === "login"}
-        className={`h-full w-full ${s.image}`}
+        fill
+        unoptimized
+        priority={priority}
+        className="object-contain block dark:hidden"
+      />
+      {/* Dark mode → white logo */}
+      <Image
+        src="/ienglish-logo-dark.svg"
+        alt="iEnglish Language Institute"
+        fill
+        unoptimized
+        priority={priority}
+        className="object-contain hidden dark:block"
       />
     </div>
   );

@@ -56,10 +56,10 @@ export function LoginForm() {
           type={showPass ? "text" : "password"}
           required
           placeholder="••••••••"
-          className="field pl-4 pr-11"
+          className="field ps-11 pe-11"
           defaultValue="admin123"
         />
-        <span className="absolute inset-y-0 right-3 grid place-items-center text-ink-soft">
+        <span className="absolute inset-y-0 start-3 grid place-items-center text-ink-soft">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" strokeWidth="1.5" />
             <path d="M8 11V8a4 4 0 1 1 8 0v3" stroke="currentColor" strokeWidth="1.5" />
@@ -68,7 +68,7 @@ export function LoginForm() {
         <button
           type="button"
           onClick={() => setShowPass((v) => !v)}
-          className="absolute inset-y-0 left-3 grid place-items-center text-ink-soft hover:text-ink"
+          className="absolute inset-y-0 end-3 grid place-items-center text-ink-soft hover:text-ink"
           aria-label="إظهار كلمة المرور"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
