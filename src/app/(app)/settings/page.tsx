@@ -37,7 +37,7 @@ export default async function SettingsPage() {
         users: b._count.users,
       }))}
       users={users
-        .filter((u) => u.role !== "ADMIN")
+        .filter((u) => u.id !== session.userId)
         .map((u) => ({
           id: u.id,
           email: u.email,
