@@ -18,6 +18,7 @@ import {
   resetUserPassword,
   resolveResetRequest,
   dismissResetRequest,
+  updateMyAccount,
 } from "@/app/actions/users";
 import { useT } from "@/components/i18n";
 
@@ -27,11 +28,13 @@ type ResetReq = { id: string; email: string; createdAt: string };
 
 export function SettingsClient({
   currentUserId,
+  currentEmail,
   branches,
   users,
   resetRequests,
 }: {
   currentUserId: string;
+  currentEmail: string;
   branches: Branch[];
   users: UserRow[];
   resetRequests: ResetReq[];
@@ -40,6 +43,34 @@ export function SettingsClient({
   const { t } = useT();
   const [pending, start] = useTransition();
   const refresh = () => router.refresh();
+
+  // my account
+  const [accEmail, setAccEmail] = useState(currentEmail);
+  const [accCurrent, setAccCurrent] = useState("");
+  const [accNew, setAccNew] = useState("");
+  const [accMsg, setAccMsg] = useState<string | null>(null);
+  const [accOk, setAccOk] = useState(false);
+
+  function saveAccount() {
+    setAccMsg(null);
+    setAccOk(false);
+    start(async () => {
+      try {
+        await updateMyAccount({
+          email: accEmail,
+          currentPassword: accCurrent,
+          newPassword: accNew || undefined,
+        });
+        setAccCurrent("");
+        setAccNew("");
+        setAccOk(true);
+        setAccMsg(t("set.accountSaved"));
+        refresh();
+      } catch (e) {
+        setAccMsg(e instanceof Error ? e.message : "حصل خطأ");
+      }
+    });
+  }
 
   // branches
   const [newName, setNewName] = useState("");
@@ -106,7 +137,7 @@ export function SettingsClient({
     });
   }
   function resetPass(id: string) {
-    const p = prompt("كلمة المرور الجديدة (6 أحرف على الأقل):");
+    const p = prompt("كلمة المرور الجديدة (8 أحرف على الأقل، حروف وأرقام):");
     if (!p) return;
     start(async () => {
       await resetUserPassword(id, p);
@@ -116,7 +147,7 @@ export function SettingsClient({
 
   // reset requests
   function fulfill(req: ResetReq) {
-    const p = prompt(`كلمة مرور جديدة لـ ${req.email} (6 أحرف على الأقل):`);
+    const p = prompt(`كلمة مرور جديدة لـ ${req.email} (8 أحرف على الأقل، حروف وأرقام):`);
     if (!p) return;
     start(async () => {
       await resolveResetRequest(req.id, p);
@@ -146,6 +177,59 @@ export function SettingsClient({
           <h1 className="text-3xl font-extrabold text-ink">{t("set.title")}</h1>
           <p className="text-ink-soft mt-1">{t("set.subtitle")}</p>
         </div>
+
+        {/* My account — email + password */}
+        <section className="card p-6">
+          <div className="flex items-center gap-2 mb-1">
+            <IconUsers className="text-brand" />
+            <h2 className="font-extrabold text-ink">{t("set.account")}</h2>
+          </div>
+          <p className="text-sm text-ink-soft mb-4">{t("set.accountSub")}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl">
+            <div className="md:col-span-2">
+              <label className="block text-xs font-bold text-ink mb-1.5">{t("set.email")}</label>
+              <input
+                value={accEmail}
+                onChange={(e) => setAccEmail(e.target.value)}
+                dir="ltr"
+                type="email"
+                className="field text-left w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-ink mb-1.5">{t("set.currentPassword")}</label>
+              <input
+                value={accCurrent}
+                onChange={(e) => setAccCurrent(e.target.value)}
+                dir="ltr"
+                type="password"
+                autoComplete="current-password"
+                className="field text-left w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-ink mb-1.5">{t("set.newPassword")}</label>
+              <input
+                value={accNew}
+                onChange={(e) => setAccNew(e.target.value)}
+                dir="ltr"
+                type="password"
+                autoComplete="new-password"
+                className="field text-left w-full"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-3 mt-4">
+            <button onClick={saveAccount} disabled={pending || !accCurrent} className="btn-primary">
+              <IconCheck width={16} height={16} /> {t("set.saveAccount")}
+            </button>
+            {accMsg && (
+              <span className={`text-sm font-bold ${accOk ? "text-success" : "text-danger"}`}>
+                {accMsg}
+              </span>
+            )}
+          </div>
+        </section>
 
         {/* Password reset requests (only when present) */}
         {resetRequests.length > 0 && (

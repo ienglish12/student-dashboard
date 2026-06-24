@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { isRole } from "@/lib/enums";
+import { validatePassword } from "@/lib/password";
 
 async function requireAdmin() {
   const session = await getSession();
@@ -24,8 +25,8 @@ export async function createUser(input: CreateUserInput) {
 
   const email = input.email.trim().toLowerCase();
   if (!email || !email.includes("@")) throw new Error("بريد إلكتروني غير صحيح");
-  if (!input.password || input.password.length < 6)
-    throw new Error("كلمة المرور لازم تكون 6 أحرف على الأقل");
+  const pwErr = validatePassword(input.password);
+  if (pwErr) throw new Error(pwErr);
   const role = isRole(input.role) ? input.role : "BRANCH";
   const branchId = role === "BRANCH" ? input.branchId || null : null;
   if (role === "BRANCH" && !branchId)
@@ -46,8 +47,8 @@ export async function createUser(input: CreateUserInput) {
 /** Reset an existing user's password. */
 export async function resetUserPassword(id: string, password: string) {
   await requireAdmin();
-  if (!password || password.length < 6)
-    throw new Error("كلمة المرور لازم تكون 6 أحرف على الأقل");
+  const pwErr = validatePassword(password);
+  if (pwErr) throw new Error(pwErr);
   const passwordHash = await bcrypt.hash(password, 10);
   await prisma.user.update({ where: { id }, data: { passwordHash } });
   revalidatePath("/settings");
@@ -72,8 +73,8 @@ export async function requestPasswordReset(email: string) {
 /** Admin: set a new password for the request's user and mark it resolved. */
 export async function resolveResetRequest(id: string, password: string) {
   await requireAdmin();
-  if (!password || password.length < 6)
-    throw new Error("كلمة المرور لازم تكون 6 أحرف على الأقل");
+  const pwErr = validatePassword(password);
+  if (pwErr) throw new Error(pwErr);
   const req = await prisma.passwordResetRequest.findUnique({ where: { id } });
   if (!req) throw new Error("الطلب غير موجود");
   const passwordHash = await bcrypt.hash(password, 10);
@@ -94,6 +95,47 @@ export async function dismissResetRequest(id: string) {
   await prisma.passwordResetRequest.delete({ where: { id } });
   revalidatePath("/settings");
   return { ok: true };
+}
+
+/** Self-service: the signed-in user updates their own email and/or password. */
+export async function updateMyAccount(input: {
+  email?: string;
+  currentPassword: string;
+  newPassword?: string;
+}) {
+  const session = await getSession();
+  if (!session) throw new Error("غير مصرّح");
+
+  const user = await prisma.user.findUnique({ where: { id: session.userId } });
+  if (!user) throw new Error("الحساب غير موجود");
+
+  // Any change requires confirming the current password.
+  const ok = await bcrypt.compare(input.currentPassword ?? "", user.passwordHash);
+  if (!ok) throw new Error("كلمة المرور الحالية غير صحيحة");
+
+  const data: { email?: string; passwordHash?: string } = {};
+
+  if (input.email !== undefined) {
+    const email = input.email.trim().toLowerCase();
+    if (!email || !email.includes("@")) throw new Error("بريد إلكتروني غير صحيح");
+    if (email !== user.email) {
+      const existing = await prisma.user.findUnique({ where: { email } });
+      if (existing) throw new Error("الإيميل ده مستخدم بالفعل");
+      data.email = email;
+    }
+  }
+
+  if (input.newPassword) {
+    const pwErr = validatePassword(input.newPassword);
+    if (pwErr) throw new Error(pwErr);
+    data.passwordHash = await bcrypt.hash(input.newPassword, 10);
+  }
+
+  if (Object.keys(data).length === 0) return { ok: true as const };
+
+  await prisma.user.update({ where: { id: user.id }, data });
+  revalidatePath("/settings");
+  return { ok: true as const };
 }
 
 export async function deleteUser(id: string) {

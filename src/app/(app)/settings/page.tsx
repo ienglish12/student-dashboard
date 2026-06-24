@@ -23,9 +23,12 @@ export default async function SettingsPage() {
     }),
   ]);
 
+  const me = users.find((u) => u.id === session.userId);
+
   return (
     <SettingsClient
       currentUserId={session.userId}
+      currentEmail={me?.email ?? ""}
       branches={sortBranches(branches).map((b) => ({
         id: b.id,
         name: branchDisplayName(b),

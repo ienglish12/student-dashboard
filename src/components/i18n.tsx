@@ -256,6 +256,16 @@ export const T: Dict = {
 
   // settings
   "set.title": { ar: "إعدادات النظام", en: "System settings" },
+  "set.account": { ar: "حسابي", en: "My account" },
+  "set.accountSub": {
+    ar: "عدّل بريدك الإلكتروني أو كلمة المرور. لازم تأكيد كلمة المرور الحالية لأي تغيير.",
+    en: "Update your email or password. Your current password is required for any change.",
+  },
+  "set.email": { ar: "البريد الإلكتروني", en: "Email" },
+  "set.currentPassword": { ar: "كلمة المرور الحالية", en: "Current password" },
+  "set.newPassword": { ar: "كلمة مرور جديدة (اختياري)", en: "New password (optional)" },
+  "set.saveAccount": { ar: "حفظ تغييرات الحساب", en: "Save account changes" },
+  "set.accountSaved": { ar: "✓ تم حفظ التغييرات", en: "✓ Changes saved" },
   "set.subtitle": {
     ar: "إدارة الفروع، استيراد البيانات، والتحكم في قاعدة البيانات العامة.",
     en: "Manage branches, import data, and control the database.",
