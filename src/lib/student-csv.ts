@@ -115,6 +115,33 @@ function deliveryKey(raw: string): keyof ReportNumbers | null {
   return null;
 }
 
+function genderKey(raw: string): "male" | "female" | null {
+  const v = norm(raw);
+  if (!v) return null;
+  // Accepts "F"/"M" as well as "Female"/"Male" (with stray spaces) and Arabic.
+  if (v === "f" || v.startsWith("female") || v.includes("أنث") || v.includes("انث"))
+    return "female";
+  if (v === "m" || v.startsWith("male") || v.includes("ذكر")) return "male";
+  return null;
+}
+
+/** Extract a plausible birth year from either a bare year (1987) or a full
+ *  date of birth (15/12/1996, 1996-12-15, …). */
+function birthYear(raw: string): number | null {
+  const groups = (raw || "").match(/\d{4}/g);
+  const now = new Date().getFullYear();
+  if (groups) {
+    for (const g of groups) {
+      const y = parseInt(g, 10);
+      if (y >= 1900 && y <= now) return y;
+    }
+    return null;
+  }
+  // Fallback: a 2-digit year or other digits.
+  const n = parseInt((raw || "").replace(/\D/g, ""), 10);
+  return Number.isFinite(n) && n > 1900 && n <= now ? n : null;
+}
+
 function courseInfo(raw: string): { name: string; type: string } | null {
   const v = norm(raw);
   if (!v) return null;
@@ -166,9 +193,9 @@ export function aggregateStudentCsv(text: string): {
 
   for (let r = 1; r < grid.length; r++) {
     const row = grid[r];
-    const gender = norm(ci.gender >= 0 ? row[ci.gender] : "");
+    const gender = genderKey(ci.gender >= 0 ? row[ci.gender] : "");
     // Skip rows that aren't real enrolled students (no gender = unpaid/placement)
-    if (gender !== "m" && gender !== "f") {
+    if (!gender) {
       skipped++;
       continue;
     }
@@ -192,14 +219,14 @@ export function aggregateStudentCsv(text: string): {
     totalStudents++;
 
     // gender
-    if (gender === "m") acc.numbers.male++;
+    if (gender === "male") acc.numbers.male++;
     else acc.numbers.female++;
 
-    // age (column holds birth year)
+    // age (column holds a birth year or a full date of birth)
     if (ci.age >= 0) {
-      const yr = parseInt((row[ci.age] || "").replace(/\D/g, ""), 10);
+      const yr = birthYear(row[ci.age]);
       const periodYear = parseInt(period.slice(0, 4), 10);
-      if (Number.isFinite(yr) && yr > 1900 && yr <= periodYear) {
+      if (yr && yr <= periodYear) {
         const b = ageBucket(periodYear - yr);
         if (b) acc.numbers[b]++;
       }
