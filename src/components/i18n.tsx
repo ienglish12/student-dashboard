@@ -12,13 +12,6 @@ export const T: Dict = {
   "app.tagline": { ar: "نظام تحليل البيانات", en: "Analytics System" },
   "nav.analysis": { ar: "تحليل البيانات", en: "Analytics" },
   "nav.compare": { ar: "المقارنة", en: "Compare" },
-  "nav.trends": { ar: "الاتجاهات", en: "Trends" },
-  "trend.title": { ar: "الاتجاهات عبر الزمن", en: "Trends over time" },
-  "trend.subtitle": {
-    ar: "تطوّر المؤشرات عبر الشهور — لكل الفروع أو فرع محدد.",
-    en: "How key metrics evolve across months — all branches or one branch.",
-  },
-  "trend.noData": { ar: "لا توجد بيانات كافية لعرض الاتجاهات.", en: "Not enough data to show trends yet." },
   "nav.reports": { ar: "المتابعة", en: "Reports" },
   "nav.import": { ar: "رفع الملفات", en: "Upload" },
   "nav.settings": { ar: "الإعدادات", en: "Settings" },

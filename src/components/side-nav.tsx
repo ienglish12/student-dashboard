@@ -13,7 +13,6 @@ import {
   IconClipboard,
   IconCompare,
   IconUpload,
-  IconTrend,
 } from "@/components/icons";
 import type { Role } from "@/lib/enums";
 
@@ -35,7 +34,6 @@ export function SideNav({
       ? [
           { href: "/dashboard", label: t("nav.analysis"), icon: <IconDashboard width={20} height={20} /> },
           { href: "/compare", label: t("nav.compare"), icon: <IconCompare width={20} height={20} /> },
-          { href: "/trends", label: t("nav.trends"), icon: <IconTrend width={20} height={20} /> },
           { href: "/reports", label: t("nav.reports"), icon: <IconClipboard width={20} height={20} /> },
           { href: "/import", label: t("nav.import"), icon: <IconUpload width={20} height={20} /> },
           { href: "/settings", label: t("nav.settings"), icon: <IconSettings width={20} height={20} /> },
