@@ -256,6 +256,8 @@ export const T: Dict = {
   "dash.of": { ar: "من", en: "of" },
   "dash.missing": { ar: "ناقص", en: "missing" },
   "dash.allBranches": { ar: "كل الفروع", en: "All branches" },
+  "dash.exportExcel": { ar: "تصدير Excel", en: "Export Excel" },
+  "dash.exportPdf": { ar: "طباعة / حفظ PDF", en: "Print / Save PDF" },
   "dash.branchNotes": { ar: "ملاحظات الفرع", en: "Branch notes" },
   "kpi.total": { ar: "إجمالي الطلاب", en: "Total students" },
   "kpi.gender": { ar: "توزيع الجنس", en: "Gender split" },

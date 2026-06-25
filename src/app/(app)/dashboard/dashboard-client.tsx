@@ -17,12 +17,14 @@ import type { Aggregated } from "@/lib/aggregate";
 import { useT } from "@/components/i18n";
 import { useTheme } from "@/components/theme";
 import { MonthPicker } from "@/components/month-picker";
+import { downloadCsv } from "@/lib/csv-export";
 import {
   IconRefresh,
   IconPrint,
   IconCalendar,
   IconBulb,
   IconUsers,
+  IconDownload,
 } from "@/components/icons";
 
 const pctOf = (count: number, max: number) =>
@@ -76,6 +78,63 @@ export function DashboardClient({
     router.push(`/dashboard?${params.toString()}`);
   };
 
+  const exportExcel = () => {
+    const rows: (string | number)[][] = [];
+    const scope = isSingle ? selectedName : t("dash.allBranches");
+    rows.push([t("set.title"), `${scope} · ${period}`]);
+    rows.push([]);
+
+    rows.push([t("kpi.total"), counts.total]);
+    rows.push([t("legend.male"), counts.male]);
+    rows.push([t("legend.female"), counts.female]);
+    rows.push([t("kpi.avgAge"), counts.avgAge]);
+    rows.push([t("kpi.renewal"), `${counts.renewalRate}%`]);
+    rows.push([]);
+
+    if (!isSingle && byBranch.length) {
+      rows.push([t("card.byBranch"), t("kpi.total"), t("kpi.renewal")]);
+      for (const b of byBranch) rows.push([b.name, b.total, `${b.renewalRate}%`]);
+      rows.push([]);
+    }
+
+    if (topNationalities.length) {
+      rows.push([t("card.topNats"), ""]);
+      for (const n of topNationalities) rows.push([n.name, n.count]);
+      rows.push([]);
+    }
+
+    rows.push([t("card.ageGroups"), ""]);
+    for (const a of ageGroups) rows.push([a.label, a.count]);
+    rows.push([]);
+
+    if (levels.length) {
+      rows.push([t("card.levels"), ""]);
+      for (const l of levels) rows.push([l.label, l.count]);
+      rows.push([]);
+    }
+
+    const classRows = data.classOverall.filter((c) => c.count > 0);
+    if (classRows.length) {
+      rows.push([t("sec.classType"), ""]);
+      for (const c of classRows) rows.push([t(CLASS_LABEL[c.key] ?? c.key), c.count]);
+      rows.push([]);
+    }
+
+    const deliveryRows = data.deliveryOverall.filter((d) => d.count > 0);
+    if (deliveryRows.length) {
+      rows.push([t("sec.delivery"), ""]);
+      for (const d of deliveryRows) rows.push([t(DELIVERY_LABEL[d.key] ?? d.key), d.count]);
+      rows.push([]);
+    }
+
+    if (data.topCourses.length) {
+      rows.push([t("sec.courses"), ""]);
+      for (const c of data.topCourses) rows.push([c.name, c.count]);
+    }
+
+    downloadCsv(`ienglish-${isSingle ? selectedName : "all"}-${period}.csv`, rows);
+  };
+
   return (
     <div className="min-h-screen">
       <div className="p-6 lg:p-8 space-y-6 mx-auto w-full max-w-[1600px]">
@@ -104,7 +163,10 @@ export function DashboardClient({
             <button onClick={() => router.refresh()} className="card size-10 grid place-items-center text-ink-soft hover:text-brand" aria-label={t("refresh")}>
               <IconRefresh width={18} height={18} />
             </button>
-            <button onClick={() => window.print()} className="card size-10 grid place-items-center text-ink-soft hover:text-brand" aria-label={t("print")}>
+            <button onClick={exportExcel} disabled={empty} className="card size-10 grid place-items-center text-ink-soft hover:text-brand disabled:opacity-50" aria-label={t("dash.exportExcel")} title={t("dash.exportExcel")}>
+              <IconDownload width={18} height={18} />
+            </button>
+            <button onClick={() => window.print()} className="card size-10 grid place-items-center text-ink-soft hover:text-brand" aria-label={t("print")} title={t("dash.exportPdf")}>
               <IconPrint width={18} height={18} />
             </button>
           </div>
