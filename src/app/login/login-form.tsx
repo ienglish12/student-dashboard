@@ -83,7 +83,6 @@ export function LoginForm() {
           required
           placeholder="example@ienglish.com"
           className="field pr-4 pl-11 text-left"
-          defaultValue="admin@ienglish.com"
         />
         <span className="absolute inset-y-0 left-3 grid place-items-center text-ink-soft">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -106,7 +105,6 @@ export function LoginForm() {
           required
           placeholder="••••••••"
           className="field ps-11 pe-11"
-          defaultValue="admin123"
         />
         <span className="absolute inset-y-0 start-3 grid place-items-center text-ink-soft">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
