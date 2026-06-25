@@ -378,6 +378,21 @@ export function DashboardClient({
                     </Card>
                   )}
 
+                  {data.extras.instructors.length > 0 && (
+                    <Card title={t("dash.instructors")}>
+                      <div className="space-y-3">
+                        {data.extras.instructors.slice(0, 8).map((c) => (
+                          <ProgressRow
+                            key={c.name}
+                            label={c.name}
+                            count={c.count}
+                            pct={pctOf(c.count, data.extras.instructors[0].count)}
+                          />
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+
                   {data.extras.packages.hours +
                     data.extras.packages.levels +
                     data.extras.packages.both >

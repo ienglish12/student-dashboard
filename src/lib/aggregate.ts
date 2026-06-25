@@ -162,6 +162,7 @@ export function aggregate(
 
   // ---- Extra analytics merged from roster imports (consultants/packages/byDay) ----
   const consultantMap = new Map<string, number>();
+  const instructorMap = new Map<string, number>();
   const packages = { hours: 0, levels: 0, both: 0, unknown: 0 };
   const byDayMap = new Map<number, number>();
   for (const r of valid) {
@@ -169,11 +170,14 @@ export function aggregate(
     try {
       const e = JSON.parse(r.extras) as {
         consultants?: Record<string, number>;
+        instructors?: Record<string, number>;
         packages?: { hours: number; levels: number; both: number; unknown: number };
         byDay?: Record<string, number>;
       };
       for (const [name, c] of Object.entries(e.consultants ?? {}))
         consultantMap.set(name, (consultantMap.get(name) ?? 0) + c);
+      for (const [name, c] of Object.entries(e.instructors ?? {}))
+        instructorMap.set(name, (instructorMap.get(name) ?? 0) + c);
       if (e.packages) {
         packages.hours += e.packages.hours || 0;
         packages.levels += e.packages.levels || 0;
@@ -189,11 +193,15 @@ export function aggregate(
   const consultants = [...consultantMap.entries()]
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count);
+  const instructors = [...instructorMap.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
   const byDay = [...byDayMap.entries()]
     .map(([day, count]) => ({ day, count }))
     .sort((a, b) => a.day - b.day);
   const hasExtras =
     consultants.length > 0 ||
+    instructors.length > 0 ||
     byDay.length > 0 ||
     packages.hours + packages.levels + packages.both > 0;
 
@@ -229,7 +237,7 @@ export function aggregate(
     classOverall,
     topCourses,
     courseTypeSplit,
-    extras: { consultants, packages, byDay, hasExtras },
+    extras: { consultants, instructors, packages, byDay, hasExtras },
     insights: {
       highest,
       lowest,

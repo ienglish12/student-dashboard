@@ -52,6 +52,7 @@ export const T: Dict = {
   "csv.delivery": { ar: "طريقة الحضور", en: "Delivery mode" },
   "csv.renewal": { ar: "التجديد", en: "Renewal" },
   "csv.consultant": { ar: "المستشار", en: "Consultant" },
+  "csv.instructor": { ar: "المدرّس", en: "Instructor" },
   "csv.pkg": { ar: "الباقة", en: "Package" },
   "imp.howTitle": { ar: "إزاي يشتغل؟", en: "How it works" },
   "imp.how1": {
@@ -271,6 +272,7 @@ export const T: Dict = {
   "card.ageGroups": { ar: "الفئات العمرية", en: "Age groups" },
   "card.levels": { ar: "توزيع المستويات", en: "Levels distribution" },
   "dash.consultants": { ar: "أداء المستشارين", en: "Consultant performance" },
+  "dash.instructors": { ar: "أداء المدرّسين", en: "Instructor performance" },
   "dash.packages": { ar: "نوع الباقة", en: "Package type" },
   "dash.byDay": { ar: "التسجيلات حسب اليوم", en: "Enrollments by day" },
   "dash.renewalsByBranch": { ar: "معدّل التجديد حسب الفرع", en: "Renewal rate by branch" },

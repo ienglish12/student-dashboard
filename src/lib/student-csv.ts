@@ -5,6 +5,7 @@ import { type ReportNumbers, emptyNumbers } from "@/lib/fields";
 
 export type ReportExtras = {
   consultants: Record<string, number>;
+  instructors: Record<string, number>;
   packages: { hours: number; levels: number; both: number; unknown: number };
   byDay: Record<string, number>;
 };
@@ -42,6 +43,7 @@ const COLUMN_SPECS: {
   { key: "delivery", labelKey: "csv.delivery", critical: false, needles: ["home, on site", "online / onsite", "on site", "onsite", "online", "الحضور", "attendance", "طريقة الحضور"] },
   { key: "renewal", labelKey: "csv.renewal", critical: false, needles: ["renewal", "renew", "تجديد"] },
   { key: "consultant", labelKey: "csv.consultant", critical: false, needles: ["educational consultant", "consultant", "sales", "مستشار", "موظف"] },
+  { key: "instructor", labelKey: "csv.instructor", critical: false, needles: ["instructor", "teacher", "مدرب", "مدرّس", "مدرس", "معلم"] },
   { key: "pkg", labelKey: "csv.pkg", critical: false, needles: ["hours/levels", "hours", "levels", "package", "باقة"] },
 ];
 
@@ -56,6 +58,7 @@ const EMPTY_CI = {
   delivery: -1,
   renewal: -1,
   consultant: -1,
+  instructor: -1,
   pkg: -1,
 };
 
@@ -225,6 +228,7 @@ export function aggregateStudentCsv(text: string): {
       nats: Map<string, number>;
       courses: Map<string, { type: string; count: number }>;
       consultants: Map<string, number>;
+      instructors: Map<string, number>;
       packages: { hours: number; levels: number; both: number; unknown: number };
       byDay: Map<string, number>;
     }
@@ -253,6 +257,7 @@ export function aggregateStudentCsv(text: string): {
         nats: new Map(),
         courses: new Map(),
         consultants: new Map(),
+        instructors: new Map(),
         packages: { hours: 0, levels: 0, both: 0, unknown: 0 },
         byDay: new Map(),
       });
@@ -311,6 +316,11 @@ export function aggregateStudentCsv(text: string): {
       const name = row[ci.consultant].trim();
       acc.consultants.set(name, (acc.consultants.get(name) ?? 0) + 1);
     }
+    // instructor (teacher)
+    if (ci.instructor >= 0 && row[ci.instructor]?.trim()) {
+      const name = row[ci.instructor].trim();
+      acc.instructors.set(name, (acc.instructors.get(name) ?? 0) + 1);
+    }
     // package type (Hours vs Levels)
     if (ci.pkg >= 0) {
       const v = norm(row[ci.pkg]);
@@ -342,6 +352,7 @@ export function aggregateStudentCsv(text: string): {
     })),
     extras: {
       consultants: Object.fromEntries(a.consultants),
+      instructors: Object.fromEntries(a.instructors),
       packages: a.packages,
       byDay: Object.fromEntries(a.byDay),
     },
