@@ -41,7 +41,7 @@ export function SideNav({
       : [];
 
   return (
-    <aside className="no-print sticky top-3 h-[calc(100vh-0.75rem)] shrink-0 w-16 lg:w-60 flex flex-col bg-card border-e border-line">
+    <aside className="no-print sticky top-0 h-screen shrink-0 w-16 lg:w-60 flex flex-col bg-card border-e border-line pt-3">
       {/* Brand */}
       <div className="h-16 flex items-center justify-center lg:justify-start px-2 lg:px-5 border-b border-line shrink-0">
         <span className="hidden lg:block">

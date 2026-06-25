@@ -17,7 +17,7 @@ export function StaffTopBar({
   const initial = (email?.[0] ?? "U").toUpperCase();
 
   return (
-    <header className="no-print sticky top-3 z-30 bg-card border-b border-line">
+    <header className="no-print sticky top-0 z-30 bg-card border-b border-line">
       <div className="flex items-center gap-3 h-16 px-4 lg:px-8">
         <BrandLogo size="nav" />
 
