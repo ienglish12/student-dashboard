@@ -19,7 +19,7 @@ export default async function AppLayout({
   // get a plain top bar instead.
   if (user.role !== "ADMIN") {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-canvas pt-3">
         <StaffTopBar branchName={branchName} email={user.email} />
         <main className="flex-1 min-w-0">{children}</main>
       </div>
@@ -27,7 +27,7 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-canvas pt-3">
       <SideNav role={user.role as Role} branchName={branchName} email={user.email} />
       <main className="flex-1 min-w-0">{children}</main>
     </div>
