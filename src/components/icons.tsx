@@ -186,3 +186,12 @@ export function IconCompare(p: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function IconTrend(p: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...p}>
+      <path d="M3 3v18h18" />
+      <path d="m7 14 4-4 3 3 5-6" />
+    </svg>
+  );
+}
